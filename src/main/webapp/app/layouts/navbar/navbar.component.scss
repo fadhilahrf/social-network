@@ -34,3 +34,29 @@ Logo styles
   background: url('/content/images/logo-jhipster.png') no-repeat center center;
   background-size: contain;
 }
+
+.top-20 {
+  top: 20% !important;
+}
+
+.notification-list {
+  max-height: 500px;
+  width: 300px;
+  overflow-y: auto;
+}
+
+#notification-dropdown::after {
+  display: none;
+}
+
+.notification:hover {
+  cursor: pointer;
+  .notification-time {
+    color: lightgray;
+  }
+}
+
+.notification-time {
+  color: grey;
+  font-size: smaller;
+}

@@ -2,12 +2,16 @@ package com.socialnetwork.app.service;
 
 import com.socialnetwork.app.config.Constants;
 import com.socialnetwork.app.domain.Authority;
+import com.socialnetwork.app.domain.Notification;
 import com.socialnetwork.app.domain.User;
+import com.socialnetwork.app.domain.enumeration.NotificationType;
 import com.socialnetwork.app.repository.AuthorityRepository;
+import com.socialnetwork.app.repository.NotificationRepository;
 import com.socialnetwork.app.repository.UserRepository;
 import com.socialnetwork.app.security.AuthoritiesConstants;
 import com.socialnetwork.app.security.SecurityUtils;
 import com.socialnetwork.app.service.dto.AdminUserDTO;
+import com.socialnetwork.app.service.dto.NotificationDTO;
 import com.socialnetwork.app.service.dto.UserDTO;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -38,10 +42,13 @@ public class UserService {
 
     private final AuthorityRepository authorityRepository;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository) {
+    private final NotificationRepository notificationRepository;
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository, NotificationRepository notificationRepository, NotificationService notificationService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityRepository = authorityRepository;
+        this.notificationRepository = notificationRepository;
     }
 
     public Optional<User> activateRegistration(String key) {
@@ -273,6 +280,11 @@ public class UserService {
         return SecurityUtils.getCurrentUserLogin().flatMap(userRepository::findOneWithAuthoritiesByLogin);
     }
 
+    @Transactional(readOnly = true)
+    public Optional<User> getCurrentUser() {
+        return SecurityUtils.getCurrentUserLogin().flatMap(userRepository::findOneByLogin);
+    }
+
     /**
      * Not activated users should be automatically deleted after 3 days.
      * <p>
@@ -295,5 +307,60 @@ public class UserService {
     @Transactional(readOnly = true)
     public List<String> getAuthorities() {
         return authorityRepository.findAll().stream().map(Authority::getName).toList();
+    }
+
+    public UserDTO getPublicUserByLogin(String login) {
+        return userRepository.findOneByLogin(login).map(user-> {
+            UserDTO userDTO = new UserDTO(user);
+            if(user.getFollowers().contains(getCurrentUser().get())) {
+                userDTO.setIsFollowed(true);
+            }
+            return userDTO;
+        }).get();
+    }
+
+    public Optional<NotificationDTO> followUser(String login) {
+        User currentUser = getUserWithAuthorities().get();
+
+        if(!currentUser.getLogin().equals(login)) {
+            User userToFollow = getUserWithAuthoritiesByLogin(login).get();
+            
+            currentUser.getFollowing().add(userToFollow);
+            currentUser.setFollowingCount(currentUser.getFollowingCount()+1);
+
+            userToFollow.getFollowers().add(currentUser);
+            userToFollow.setFollowerCount(userToFollow.getFollowerCount()+1);
+
+            userRepository.save(currentUser);
+            userRepository.save(userToFollow);
+
+            Notification notification = new Notification();
+            notification.setType(NotificationType.USER_FOLLOWED);
+            notification.setDestination("/"+currentUser.getLogin());
+            notification.setSender(currentUser);
+            notification.setReceiver(userToFollow);
+            notification.setMessage("<b>"+currentUser.getLogin()+"</b> started following you");
+            notification.setIsRead(false);
+
+            return Optional.of(notificationRepository.save(notification)).map(NotificationDTO::new);
+        }
+        return Optional.empty();
+    }
+
+    public void unfollowUser(String login) {
+        User currentUser = getUserWithAuthorities().get();
+
+        if(!currentUser.getLogin().equals(login)) {
+            User userToFollow = getUserWithAuthoritiesByLogin(login).get();
+            
+            currentUser.getFollowing().remove(userToFollow);
+            currentUser.setFollowingCount(currentUser.getFollowingCount()-1);
+
+            userToFollow.getFollowers().remove(currentUser);
+            userToFollow.setFollowerCount(userToFollow.getFollowerCount()-1);
+
+            userRepository.save(currentUser);
+            userRepository.save(userToFollow);
+        }
     }
 }

@@ -1,0 +1,50 @@
+{
+  "annotations": {
+    "changelogDate": "20240614114137"
+  },
+  "dto": "mapstruct",
+  "entityTableName": "notification",
+  "fields": [
+    {
+      "fieldName": "type",
+      "fieldType": "NotificationType",
+      "fieldValues": "USER_FOLLOWED,POST_LIKE,POST_COMMENT"
+    },
+    {
+      "fieldName": "destination",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "message",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "isRead",
+      "fieldType": "Boolean"
+    }
+  ],
+  "jpaMetamodelFiltering": false,
+  "name": "Notification",
+  "pagination": "pagination",
+  "readOnly": false,
+  "relationships": [
+    {
+      "otherEntityField": "login",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "notifications",
+      "relationshipName": "sender",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityField": "login",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "notification",
+      "relationshipName": "receiver",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

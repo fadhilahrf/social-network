@@ -35,6 +35,12 @@
             <column name="lang_key" type="varchar(10)"/>
             <column name="activation_key" type="varchar(20)"/>
             <column name="reset_key" type="varchar(20)"/>
+            <column name="follower_count" type="integer">
+                <constraints nullable="true" />
+            </column>
+            <column name="following_count" type="integer">
+                <constraints nullable="true" />
+            </column>
             <column name="created_by" type="varchar(50)">
                 <constraints nullable="false"/>
             </column>
@@ -63,6 +69,28 @@
 
         <addPrimaryKey columnNames="user_id, authority_name" tableName="jhi_user_authority"/>
 
+        <createTable tableName="rel_jhi_user__follower">
+            <column name="follower_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="jhi_user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey columnNames="jhi_user_id, follower_id" tableName="rel_jhi_user__follower"/>
+
+        <createTable tableName="rel_jhi_user__following">
+            <column name="following_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="jhi_user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey columnNames="jhi_user_id, following_id" tableName="rel_jhi_user__following"/>
+
         <addForeignKeyConstraint baseColumnNames="authority_name"
                                  baseTableName="jhi_user_authority"
                                  constraintName="fk_authority_name"
@@ -74,6 +102,34 @@
                                  constraintName="fk_user_id"
                                  referencedColumnNames="id"
                                  referencedTableName="jhi_user"/>
+
+        <addForeignKeyConstraint baseColumnNames="jhi_user_id"
+                                 baseTableName="rel_jhi_user__follower"
+                                 constraintName="fk_rel_jhi_user__follower__jhi_user_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="jhi_user"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="follower_id"
+                                 baseTableName="rel_jhi_user__follower"
+                                 constraintName="fk_rel_jhi_user__follower__follower_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="jhi_user"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="jhi_user_id"
+                                 baseTableName="rel_jhi_user__following"
+                                 constraintName="fk_rel_jhi_user__following__jhi_user_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="jhi_user"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="following_id"
+                                 baseTableName="rel_jhi_user__following"
+                                 constraintName="fk_rel_jhi_user__following__following_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="jhi_user"
+                                 />                                 
 
         <addNotNullConstraint   columnName="password_hash"
                                 columnDataType="varchar(60)"

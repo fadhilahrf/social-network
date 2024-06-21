@@ -1,9 +1,10 @@
 package com.socialnetwork.app.web.rest;
 
 import com.socialnetwork.app.service.UserService;
+import com.socialnetwork.app.service.dto.NotificationDTO;
 import com.socialnetwork.app.service.dto.UserDTO;
 import java.util.*;
-import java.util.Collections;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -12,12 +13,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.PaginationUtil;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/public")
 public class PublicUserResource {
 
     private static final List<String> ALLOWED_ORDERED_PROPERTIES = Collections.unmodifiableList(
@@ -28,8 +30,11 @@ public class PublicUserResource {
 
     private final UserService userService;
 
-    public PublicUserResource(UserService userService) {
+    private final SimpMessagingTemplate messagingTemplate;
+
+    public PublicUserResource(UserService userService, SimpMessagingTemplate messagingTemplate) {
         this.userService = userService;
+        this.messagingTemplate = messagingTemplate;
     }
 
     /**
@@ -61,5 +66,27 @@ public class PublicUserResource {
     @GetMapping("/authorities")
     public List<String> getAuthorities() {
         return userService.getAuthorities();
+    }
+
+    @GetMapping("/users/{login}")
+    public ResponseEntity<UserDTO> getPublicUserByLogin(@PathVariable("login") String login) {
+        return ResponseEntity.ok().body(userService.getPublicUserByLogin(login));
+    }
+
+    @PostMapping("/user/follow/{login}") 
+    public void followUser(@PathVariable("login") String login) {
+        Optional<NotificationDTO> notificationOptional = userService.followUser(login);
+
+        if(notificationOptional.isPresent()) {
+            messagingTemplate.convertAndSendToUser(
+                notificationOptional.get().getReceiver().getLogin(), "/notification",
+                notificationOptional.get()
+            );
+        }
+    }
+
+    @PostMapping("/user/unfollow/{login}") 
+    public void unfollowUser(@PathVariable("login") String login) {
+        userService.unfollowUser(login);
     }
 }

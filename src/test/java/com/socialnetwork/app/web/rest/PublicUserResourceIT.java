@@ -66,7 +66,7 @@ class PublicUserResourceIT {
     @Transactional
     void getAllAuthorities() throws Exception {
         restUserMockMvc
-            .perform(get("/api/authorities").accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
+            .perform(get("/api/public/authorities").accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$").isArray())

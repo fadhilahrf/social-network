@@ -1,0 +1,54 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (notification) {
+      <div>
+        <h2 data-cy="notificationDetailsHeading"><span>Notification</span></h2>
+
+        <hr />
+
+        <jhi-alert-error></jhi-alert-error>
+
+        <jhi-alert></jhi-alert>
+
+        <dl class="row-md jh-entity-details">
+          <dt><span>ID</span></dt>
+          <dd>
+            <span>{{ notification.id }}</span>
+          </dd>
+          <dt><span>Type</span></dt>
+          <dd>
+            <span>{{ notification.type }}</span>
+          </dd>
+          <dt><span>Destination</span></dt>
+          <dd>
+            <span>{{ notification.destination }}</span>
+          </dd>
+          <dt><span>Message</span></dt>
+          <dd>
+            <span>{{ notification.message }}</span>
+          </dd>
+          <dt><span>Is Read</span></dt>
+          <dd>
+            <span>{{ notification.isRead }}</span>
+          </dd>
+          <dt><span>Sender</span></dt>
+          <dd>
+            <span>{{ notification.sender?.login }}</span>
+          </dd>
+          <dt><span>Receiver</span></dt>
+          <dd>
+            <span>{{ notification.receiver?.login }}</span>
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span>Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/notification', notification.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span>Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

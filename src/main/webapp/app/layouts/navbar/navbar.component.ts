@@ -10,6 +10,10 @@ import { LoginService } from 'app/login/login.service';
 import { ProfileService } from 'app/layouts/profiles/profile.service';
 import { EntityNavbarItems } from 'app/entities/entity-navbar-items';
 import NavbarItem from './navbar-item.model';
+import { NotificationService } from 'app/entities/notification/service/notification.service';
+import { StompService } from 'app/shared/service/stomp.service';
+import { INotification } from 'app/entities/notification/notification.model';
+import dayjs from 'dayjs';
 
 @Component({
   standalone: true,
@@ -25,11 +29,15 @@ export default class NavbarComponent implements OnInit {
   version = '';
   account: Account | null = null;
   entitiesNavbarItems: NavbarItem[] = [];
+  notificationsCount = 0;
+  notifications: INotification[] = [];
 
   constructor(
     private loginService: LoginService,
     private accountService: AccountService,
     private profileService: ProfileService,
+    private notificationService: NotificationService,
+    private stompService: StompService,
     private router: Router,
   ) {
     if (VERSION) {
@@ -47,6 +55,27 @@ export default class NavbarComponent implements OnInit {
     this.accountService.getAuthenticationState().subscribe(account => {
       this.account = account;
     });
+
+    this.stompService.connect({}, ()=>{
+      this.stompService.getStomp().subscribe(`/user/${this.account!.login}/notification`, (payload)=>{
+        try {
+          if(JSON.parse(payload.body)) {
+            const notification: INotification = JSON.parse(payload.body);
+            console.log(notification)
+            if(notification && !notification.isRead) {
+              this.notificationsCount++;
+            }
+
+          }
+      } catch (error) {
+          if (error instanceof TypeError) {
+              console.error("Caught a TypeError:", error.message);
+          } else {
+              throw error;
+          }
+      }
+      });
+    }, ()=>{console.log("error")});
   }
 
   collapseNavbar(): void {
@@ -65,5 +94,24 @@ export default class NavbarComponent implements OnInit {
 
   toggleNavbar(): void {
     this.isNavbarCollapsed = !this.isNavbarCollapsed;
+  }
+
+  getNotifications(): void {
+    this.notificationService.findAllByReceiver(this.account?.login!).subscribe(res=>{
+      if(res.body) {
+        this.notificationsCount = 0;
+        this.notifications = res.body;
+      }
+    })
+  }
+
+  navigateTo(destination: string) {
+    this.router.navigate([destination]);
+  }
+
+  getDateTime(date: string): string {
+    const dateTime = dayjs(date);
+
+    return dateTime.format('HH.mm D MMMM YYYY');
   }
 }

@@ -6,11 +6,12 @@ import { ApplicationConfigService } from 'app/core/config/application-config.ser
 import { createRequestOption } from 'app/core/request/request-util';
 import { isPresent } from 'app/core/util/operators';
 import { Pagination } from 'app/core/request/request.model';
-import { IUser, getUserIdentifier } from './user.model';
+import { IUser, getUserIdentifier } from '../user.model';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
   private resourceUrl = this.applicationConfigService.getEndpointFor('api/users');
+  private publicResourceUrl = this.applicationConfigService.getEndpointFor('api/public');
 
   constructor(
     private http: HttpClient,
@@ -24,6 +25,18 @@ export class UserService {
 
   compareUser(o1: Pick<IUser, 'id'> | null, o2: Pick<IUser, 'id'> | null): boolean {
     return o1 && o2 ? o1.id === o2.id : o1 === o2;
+  }
+
+  findPublicUserByLogin(login: string): Observable<HttpResponse<IUser>> {
+    return this.http.get<IUser>(`${this.publicResourceUrl}/users/${login}`, { observe: 'response' });
+  }
+
+  follow(login: string): Observable<HttpResponse<void>> { 
+    return this.http.post<void>(`${this.publicResourceUrl}/user/follow/${login}`, {},{ observe: 'response' });
+  }
+
+  unfollow(login: string): Observable<HttpResponse<void>> { 
+    return this.http.post<void>(`${this.publicResourceUrl}/user/unfollow/${login}`, {}, { observe: 'response' });
   }
 
   addUserToCollectionIfMissing<Type extends Partial<IUser> & Pick<IUser, 'id'>>(

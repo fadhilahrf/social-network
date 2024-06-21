@@ -27,26 +27,79 @@
             </span>
           </a>
         </li>
-        <!-- jhipster-needle-add-element-to-menu - JHipster will add new menu items here -->
-        @if (account !== null) {
-          <li
-            ngbDropdown
-            class="nav-item dropdown pointer"
-            display="dynamic"
-            routerLinkActive="active"
-            [routerLinkActiveOptions]="{ exact: true }"
+        <li ngbDropdown class="nav-item dropdown" display="dynamic">
+          <a
+            class="nav-link btn btn-dark position-relative"
+            ngbDropdownToggle
+            href="javascript:void(0);"
+            id="notification-dropdown"
+            data-cy="notificationDropdown"
+            (click)="getNotifications()"
           >
-            <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="entity-menu" data-cy="entity">
-              <span>
-                <fa-icon icon="th-list"></fa-icon>
-                <span>Entities</span>
+            <span>
+              <fa-icon icon="bell"></fa-icon>
+              <span class="position-absolute top-20 start-100 translate-middle badge rounded-pill bg-danger">
+                {{ notificationsCount }}
               </span>
-            </a>
-            <ul class="dropdown-menu" ngbDropdownMenu aria-labelledby="entity-menu">
-              <!-- jhipster-needle-add-entity-to-menu - JHipster will add entities to the menu here -->
-            </ul>
-          </li>
-        }
+            </span>
+          </a>
+          <ul class="dropdown-menu notification-list" ngbDropdownMenu aria-labelledby="notification-dropdown">
+            <li
+              *ngFor="let notification of notifications"
+              class="dropdown-item notification"
+              (click)="navigateTo(notification.destination!)"
+            >
+              <div class="d-flex justify-content-between align-items-center">
+                <div [innerHTML]="notification.message"></div>
+              </div>
+              <small class="notification-time"> {{ getDateTime(notification.createdDate?.toString()!) }} </small>
+            </li>
+            <li *ngIf="notifications.length === 0" class="dropdown-item text-center">No notifications</li>
+          </ul>
+        </li>
+        <!-- jhipster-needle-add-element-to-menu - JHipster will add new menu items here -->
+        <li
+          *jhiHasAnyAuthority="'ROLE_ADMIN'"
+          ngbDropdown
+          class="nav-item dropdown pointer"
+          display="dynamic"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="entity-menu" data-cy="entity">
+            <span>
+              <fa-icon icon="th-list"></fa-icon>
+              <span>Entities</span>
+            </span>
+          </a>
+          <ul class="dropdown-menu" ngbDropdownMenu aria-labelledby="entity-menu">
+            <li>
+              <a
+                class="dropdown-item"
+                routerLink="/notification"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                (click)="collapseNavbar()"
+              >
+                <fa-icon icon="asterisk" [fixedWidth]="true"></fa-icon>
+                <span>Notification</span>
+              </a>
+            </li>
+            <li>
+              <a
+                class="dropdown-item"
+                routerLink="/post"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                (click)="collapseNavbar()"
+              >
+                <fa-icon icon="asterisk" [fixedWidth]="true"></fa-icon>
+                <span>Post</span>
+              </a>
+            </li>
+            <!-- jhipster-needle-add-entity-to-menu - JHipster will add entities to the menu here -->
+          </ul>
+        </li>
         <li
           *jhiHasAnyAuthority="'ROLE_ADMIN'"
           ngbDropdown
