@@ -1,3 +1,6 @@
-id;login;password_hash;first_name;last_name;email;image_url;activated;lang_key;created_by;last_modified_by
-1;admin;$2a$10$gSAhZrxMllrbgj/kkK9UceBPpChGWJA7SYIb1Mqo.n5aNLq1/oRrC;Administrator;Administrator;admin@localhost;;true;en;system;system
-2;user;$2a$10$VEjxo0jq2YG9Rbk2HmX9S.k1uZBGYUHdUcid3g/vfiEl7lwWgOH/K;User;User;user@localhost;;true;en;system;system
+id;login;password_hash;first_name;last_name;email;image_url;activated;lang_key;created_by;last_modified_by;follower_count;following_count;post_count
+1;admin;$2a$10$gSAhZrxMllrbgj/kkK9UceBPpChGWJA7SYIb1Mqo.n5aNLq1/oRrC;Administrator;Administrator;admin@localhost;;true;en;system;system;0;0;0
+2;user;$2a$10$VEjxo0jq2YG9Rbk2HmX9S.k1uZBGYUHdUcid3g/vfiEl7lwWgOH/K;User;User;user@localhost;;true;en;system;system;0;0;0
+3;joni;$2a$10$l32.LxKNU1nzYEOheL1ZR.UmQntQlHZfx7NjiqFbNqchCmAbsQFni;Jono;Joni;joni@mail.com;;true;en;system;system;0;0;0
+4;alex;$2a$10$QyIu9N0ImPCpG7eBr4NeY.zrZxSib.jwgH7fdZ3Brtp.48Cq09.bC;Alex;Rodrigo;alex@mail.com;;true;en;system;system;0;0;0
+5;bagus;$2a$10$n.5MjZ7fGe3K6UME2elZ0OiOT0LiRMhX75fWrVqlhgkyEGi4NxMUS;Bagus;Fajar;bagus@mail.com;;true;en;system;system;0;0;0

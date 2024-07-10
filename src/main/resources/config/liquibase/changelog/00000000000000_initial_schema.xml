@@ -41,6 +41,9 @@
             <column name="following_count" type="integer">
                 <constraints nullable="true" />
             </column>
+            <column name="post_count" type="integer">
+                <constraints nullable="true" />
+            </column>
             <column name="created_by" type="varchar(50)">
                 <constraints nullable="false"/>
             </column>

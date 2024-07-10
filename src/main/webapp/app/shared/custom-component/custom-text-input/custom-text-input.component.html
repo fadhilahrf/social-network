@@ -1,0 +1,12 @@
+<div class="input-container">
+    <div
+      #customTextInput
+      class="custom-text-input"
+      contenteditable="true"
+      role="textbox"
+      aria-label="Custom Text Input"
+      [attr.placeholder]="placeholder"
+      (input)="onInput($event)"
+      (blur)="onBlur()"
+    ></div>
+  </div>

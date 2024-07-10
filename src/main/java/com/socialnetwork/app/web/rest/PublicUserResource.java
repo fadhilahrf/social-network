@@ -73,6 +73,16 @@ public class PublicUserResource {
         return ResponseEntity.ok().body(userService.getPublicUserByLogin(login));
     }
 
+    @GetMapping("/users/followers/{login}")
+    public ResponseEntity<List<UserDTO>> getFollowersByUserLogin(@PathVariable("login") String login) {
+        return ResponseEntity.ok().body(userService.getFollowersByUserLogin(login));
+    }
+
+    @GetMapping("/users/following/{login}")
+    public ResponseEntity<List<UserDTO>> findFollowingByUserLogin(@PathVariable("login") String login) {
+        return ResponseEntity.ok().body(userService.findFollowingByUserLogin(login));
+    }
+
     @PostMapping("/user/follow/{login}") 
     public void followUser(@PathVariable("login") String login) {
         Optional<NotificationDTO> notificationOptional = userService.followUser(login);
@@ -86,7 +96,13 @@ public class PublicUserResource {
     }
 
     @PostMapping("/user/unfollow/{login}") 
-    public void unfollowUser(@PathVariable("login") String login) {
-        userService.unfollowUser(login);
+    public ResponseEntity<?>  unfollowUser(@PathVariable("login") String login) {
+        Optional<NotificationDTO> notificationOptional = userService.unfollowUser(login);
+
+        if(notificationOptional.isPresent()) {
+            return ResponseEntity.ok().body(null);
+         }
+
+         return ResponseEntity.badRequest().body(null);
     }
 }

@@ -59,13 +59,13 @@ export default class NavbarComponent implements OnInit {
     this.stompService.connect({}, ()=>{
       this.stompService.getStomp().subscribe(`/user/${this.account!.login}/notification`, (payload)=>{
         try {
+          console.log(payload.body);
           if(JSON.parse(payload.body)) {
             const notification: INotification = JSON.parse(payload.body);
-            console.log(notification)
+           
             if(notification && !notification.isRead) {
               this.notificationsCount++;
             }
-
           }
       } catch (error) {
           if (error instanceof TypeError) {
@@ -102,7 +102,7 @@ export default class NavbarComponent implements OnInit {
         this.notificationsCount = 0;
         this.notifications = res.body;
       }
-    })
+    });
   }
 
   navigateTo(destination: string) {

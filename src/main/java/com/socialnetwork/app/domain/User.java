@@ -109,6 +109,9 @@ public class User extends AbstractAuditingEntity<Long> {
     @Column(name = "following_count")
     private Integer followingCount = 0;
 
+    @Column(name = "post_count")
+    private Integer postCount = 0;
+
     public Long getId() {
         return id;
     }
@@ -244,6 +247,14 @@ public class User extends AbstractAuditingEntity<Long> {
 
     public void setFollowingCount(Integer followingCount) {
         this.followingCount = followingCount;
+    }
+
+    public Integer getPostCount() {
+        return postCount;
+    }
+
+    public void setPostCount(Integer postCount) {
+        this.postCount = postCount;
     }
 
     @Override

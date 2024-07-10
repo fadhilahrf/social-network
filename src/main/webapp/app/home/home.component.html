@@ -1,58 +1,38 @@
-<div class="row">
-  <div class="col-md-3">
-    <span class="hipster img-fluid rounded"></span>
-  </div>
-
-  <div class="col-md-9">
-    <h1 class="display-4"><span>Welcome, Java Hipster!</span> (Social Network)</h1>
-
-    <p class="lead">This is your homepage</p>
-
-    <div>
-      @if (account !== null) {
-        <div class="alert alert-success">
-          @if (account) {
-            <span id="home-logged-message">You are logged in as user &quot;{{ account.login }}&quot;.</span>
-          }
-        </div>
-      } @else {
-        <div class="alert alert-warning">
-          <span>If you want to </span>
-          <a class="alert-link" (click)="login()">sign in</a
-          ><span
-            >, you can try the default accounts:<br />- Administrator (login=&quot;admin&quot; and password=&quot;admin&quot;) <br />- User
-            (login=&quot;user&quot; and password=&quot;user&quot;).</span
-          >
-        </div>
-
-        <div class="alert alert-warning">
-          <span>You don&apos;t have an account yet?</span>&nbsp;
-          <a class="alert-link" routerLink="/account/register">Register a new account</a>
-        </div>
-      }
-    </div>
-
-    <p>If you have any question on JHipster:</p>
-
-    <ul>
-      <li><a href="https://www.jhipster.tech/" target="_blank" rel="noopener noreferrer">JHipster homepage</a></li>
-      <li>
-        <a href="https://stackoverflow.com/tags/jhipster/info" target="_blank" rel="noopener noreferrer">JHipster on Stack Overflow</a>
-      </li>
-      <li>
-        <a href="https://github.com/jhipster/generator-jhipster/issues?state=open" target="_blank" rel="noopener noreferrer"
-          >JHipster bug tracker</a
+<div class="row d-flex justify-content-center">
+    @if (account == null) {
+      <div class="col-md-9">
+      <div class="alert alert-warning">
+        <span>If you want to </span>
+        <a class="alert-link" (click)="login()">sign in</a
+        ><span
+          >, you can try the default accounts:<br />- Administrator (login=&quot;admin&quot; and password=&quot;admin&quot;) <br />- User
+          (login=&quot;user&quot; and password=&quot;user&quot;).</span
         >
-      </li>
-      <li>
-        <a href="https://gitter.im/jhipster/generator-jhipster" target="_blank" rel="noopener noreferrer">JHipster public chat room</a>
-      </li>
-      <li><a href="https://twitter.com/jhipster" target="_blank" rel="noopener noreferrer">follow &#64;jhipster on Twitter</a></li>
-    </ul>
+      </div>
 
-    <p>
-      <span>If you like JHipster, don&apos;t forget to give us a star on</span>
-      <a href="https://github.com/jhipster/generator-jhipster" target="_blank" rel="noopener noreferrer">GitHub</a>!
-    </p>
-  </div>
+      <div class="alert alert-warning">
+        <span>You don&apos;t have an account yet?</span>&nbsp;
+        <a class="alert-link" routerLink="/account/register">Register a new account</a>
+      </div>
+    </div>
+    } @else {
+      <div class="col-7">
+        <div class="mb-2 card">
+          <div class="card-body">
+            <form name="postForm" role="form" novalidate [formGroup]="postForm">
+              <h4><b>What's on your mind?</b></h4>
+              <div class="row">
+                <div class="col-10">
+                  <custom-text-input formControlName="content" placeholder="Enter your text here..."></custom-text-input>
+                </div>
+                <div class="col-2">
+                  <button class="btn btn-dark" type="button" (click)="createPost()" [disabled]="!postForm.valid"><fa-icon icon="arrow-right"></fa-icon></button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <post-list [account]="account"></post-list>
+      </div>
+    }
 </div>

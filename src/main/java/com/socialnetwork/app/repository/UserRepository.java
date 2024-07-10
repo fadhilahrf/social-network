@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -27,4 +28,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findOneWithAuthoritiesByEmailIgnoreCase(String email);
 
     Page<User> findAllByIdNotNullAndActivatedIsTrue(Pageable pageable);
+
+    @Query("SELECT u.followers FROM User u WHERE u.login = :login")
+    List<User> findFollowersByUserLogin(String login);
+
+    @Query("SELECT u.following FROM User u WHERE u.login = :login")
+    List<User> findFollowingByUserLogin(String login);
 }

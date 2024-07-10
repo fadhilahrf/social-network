@@ -111,7 +111,7 @@ public class NotificationService {
 
         Optional<User> userOptional = userRepository.findOneByLogin(login);
         if(userOptional.isPresent()) {
-            return notificationRepository.findAllByReceiver(userOptional.get()).stream().map(notificationMapper::toDto).toList();
+            return notificationRepository.findAllByReceiverOrderByCreatedDateDesc(userOptional.get()).stream().map(notificationMapper::toDto).toList();
         }
 
        return new ArrayList<>();

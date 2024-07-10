@@ -179,6 +179,7 @@ public class UserService {
      * @return updated user.
      */
     public Optional<AdminUserDTO> updateUser(AdminUserDTO userDTO) {
+        System.out.println("USER DTO : " + userDTO);
         return Optional
             .of(userRepository.findById(userDTO.getId()))
             .filter(Optional::isPresent)
@@ -193,6 +194,9 @@ public class UserService {
                 user.setImageUrl(userDTO.getImageUrl());
                 user.setActivated(userDTO.isActivated());
                 user.setLangKey(userDTO.getLangKey());
+                user.setFollowerCount(userDTO.getFollowerCount());
+                user.setFollowingCount(userDTO.getFollowingCount());
+                user.setPostCount(userDTO.getPostCount());
                 Set<Authority> managedAuthorities = user.getAuthorities();
                 managedAuthorities.clear();
                 userDTO
@@ -319,8 +323,40 @@ public class UserService {
         }).get();
     }
 
+    public List<UserDTO> getFollowersByUserLogin(String login) {
+        Optional<User> userOptional = getUserWithAuthoritiesByLogin(login);
+
+        if(userOptional.isPresent()) {
+            return userRepository.findFollowersByUserLogin(login).stream().map(user -> {
+               UserDTO userDTO = new UserDTO();
+               userDTO.setId(user.getId()); 
+               userDTO.setLogin(user.getLogin());
+
+               return userDTO;
+            }).toList();
+        }
+
+        return new ArrayList<>();
+    }
+
+    public List<UserDTO> findFollowingByUserLogin(String login) {
+        Optional<User> userOptional = getUserWithAuthoritiesByLogin(login);
+
+        if(userOptional.isPresent()) {
+            return userRepository.findFollowingByUserLogin(login).stream().map(user -> {
+               UserDTO userDTO = new UserDTO();
+               userDTO.setId(user.getId()); 
+               userDTO.setLogin(user.getLogin());
+
+               return userDTO;
+            }).toList();
+        }
+
+        return new ArrayList<>();
+    }
+
     public Optional<NotificationDTO> followUser(String login) {
-        User currentUser = getUserWithAuthorities().get();
+        User currentUser = getCurrentUser().get();
 
         if(!currentUser.getLogin().equals(login)) {
             User userToFollow = getUserWithAuthoritiesByLogin(login).get();
@@ -331,8 +367,8 @@ public class UserService {
             userToFollow.getFollowers().add(currentUser);
             userToFollow.setFollowerCount(userToFollow.getFollowerCount()+1);
 
-            userRepository.save(currentUser);
-            userRepository.save(userToFollow);
+            currentUser = userRepository.save(currentUser);
+            userToFollow = userRepository.save(userToFollow);
 
             Notification notification = new Notification();
             notification.setType(NotificationType.USER_FOLLOWED);
@@ -347,8 +383,8 @@ public class UserService {
         return Optional.empty();
     }
 
-    public void unfollowUser(String login) {
-        User currentUser = getUserWithAuthorities().get();
+    public Optional<NotificationDTO> unfollowUser(String login) {
+        User currentUser = getCurrentUser().get();
 
         if(!currentUser.getLogin().equals(login)) {
             User userToFollow = getUserWithAuthoritiesByLogin(login).get();
@@ -361,6 +397,19 @@ public class UserService {
 
             userRepository.save(currentUser);
             userRepository.save(userToFollow);
+
+            currentUser = userRepository.save(currentUser);
+            userToFollow = userRepository.save(userToFollow);
+
+            Optional<Notification> notificationOptional = notificationRepository.findOneByDestinationAndTypeAndSenderAndReceiver("/"+currentUser.getLogin(), NotificationType.USER_FOLLOWED, currentUser, userToFollow);
+
+            if(notificationOptional.isPresent()) {
+                notificationRepository.delete(notificationOptional.get());
+    
+                return Optional.of(notificationOptional.get()).map(NotificationDTO::new);
+            }
         }
+
+        return Optional.empty();
     }
 }

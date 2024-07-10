@@ -2,6 +2,7 @@ package com.socialnetwork.app.repository;
 
 import com.socialnetwork.app.domain.Notification;
 import com.socialnetwork.app.domain.User;
+import com.socialnetwork.app.domain.enumeration.NotificationType;
 
 import java.util.List;
 import java.util.Optional;
@@ -48,5 +49,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     )
     Optional<Notification> findOneWithToOneRelationships(@Param("id") Long id);
 
-    List<Notification> findAllByReceiver(User user);
+    List<Notification> findAllByReceiverOrderByCreatedDateDesc(User user);
+
+    Optional<Notification> findOneByDestinationAndTypeAndSenderAndReceiver(String destination, NotificationType type, User sender, User receiver);
 }

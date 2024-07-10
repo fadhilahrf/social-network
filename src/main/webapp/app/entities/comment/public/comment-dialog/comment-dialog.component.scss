@@ -1,0 +1,25 @@
+.comment-list {
+    display: flex;
+    overflow-y: auto;
+    flex-direction: column;
+    min-height: 300px;
+}
+
+.comment-box {
+    align-self: flex-start;
+    padding: 5px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    background-color:#bed6ef;
+    width: 100%;
+
+    .status {
+        font-size: x-small;
+        color: gray;
+        display: flex;
+    }
+}
+
+.author:hover {
+    cursor: pointer;
+}

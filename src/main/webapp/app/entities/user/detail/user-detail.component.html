@@ -1,41 +1,41 @@
 @if (user) {
   <div class="row d-flex justify-content-center">
     <div class="col-3">
-      <div class="detail-container">
-        <div class="row">
-          <h2 class="fw-bold">{{ (user.firstName?user.firstName:'')+' '+(user.lastName?user.lastName:'') }}</h2>
-          <h5>{{ user.login }}</h5>
-        </div>
-        <div class="row">
-          <div class="col">
-            <div class="d-flex">
-              <div class="mr-3">
-                <b>followers</b>
-                <span class="badge text-bg-dark">{{ user.followerCount }}</span>
-              </div>
-              <div class="mx-3">
-                <b>following</b>
-                <span class="badge text-bg-dark">{{ user.followingCount }}</span>
-              </div>
-              <div class="mx-3">
-                <b>posts</b>
-                <span class="badge text-bg-dark">0</span>
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <h2 class="fw-bold">{{ (user.firstName?user.firstName:'')+' '+(user.lastName?user.lastName:'') }}</h2>
+            <h5>{{ user.login }}</h5>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="d-flex">
+                <div class="mr-3">
+                  <b>followers</b>
+                  <button class="btn p-0" (click)="getFollowers()"><span class="badge text-bg-dark">{{ user.followerCount }}</span></button> 
+                </div>
+                <div class="mx-3">
+                  <b>following</b>
+                  <button class="btn p-0" (click)="getFollowing()"><span class="badge text-bg-dark">{{ user.followingCount }}</span></button>
+                </div>
+                <div class="mx-3">
+                  <b>posts</b>
+                  <span class="badge text-bg-dark">{{ user.postCount }}</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="row mt-3">
-          <div *ngIf="account?.login!=user.login" class="mb-2">
-            <button *ngIf="!user.isFollowed" class="btn btn-dark" (click)="follow()">follow</button>
-            <button *ngIf="user.isFollowed" class="btn btn-outline-dark" (click)="unfollow()">unfollow</button>
+          <div class="row mt-3">
+            <div *ngIf="account?.login!=user.login" class="mb-2">
+              <button *ngIf="!user.isFollowed" type="button" class="btn btn-dark" (click)="follow()">follow</button>
+              <button *ngIf="user.isFollowed" type="button" class="btn btn-outline-dark" (click)="unfollow()">unfollow</button>
+            </div>
           </div>
         </div>
       </div>
     </div>
     <div class="col-7">
-      <div class="detail-container">
-        
-      </div>
+      <post-list [userId]="user.id" [account]="account!"></post-list>
     </div>
   </div>
 }

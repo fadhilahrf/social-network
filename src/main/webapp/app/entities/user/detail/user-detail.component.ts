@@ -1,10 +1,17 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import SharedModule from 'app/shared/shared.module';
 import { IUser } from '../user.model';
 import { UserService } from '../service/user.service';
 import { Account } from 'app/core/auth/account.model';
 import { AccountService } from 'app/core/auth/account.service';
+import { IPost, NewPost } from 'app/entities/post/post.model';
+import { PostService } from 'app/entities/post/service/post.service';
+import { StompService } from 'app/shared/service/stomp.service';
+import { FormBuilder, Validators } from '@angular/forms';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ListModalComponent } from '../modal/list-modal/list-modal.component';
+import { PostListComponent } from 'app/entities/post/public/post-list/post-list.component';
 
 @Component({
   selector: 'jhi-user-detail',
@@ -15,11 +22,32 @@ import { AccountService } from 'app/core/auth/account.service';
 })
 export class UserDetailComponent implements OnInit {
 
+  @ViewChild(PostListComponent) postContainer!: PostListComponent;
+
   account: Account | null = null;
 
   user: IUser | null = null;
 
-  constructor(private activatedRoute: ActivatedRoute, private userService: UserService, private accountService: AccountService) {}
+  followers: IUser[] = [];
+
+  following: IUser[] = [];
+
+  posts: IPost[] = [];
+
+  postForm = this.fb.group({
+    content: ['', [Validators.required]],
+  });
+
+  constructor(
+    private activatedRoute: ActivatedRoute,
+    private router: Router, 
+    private userService: UserService, 
+    private accountService: AccountService,  
+    // private stompService: StompService, 
+    private postService: PostService,
+    private fb: FormBuilder,
+    private modalService: NgbModal,
+  ) {}
 
   ngOnInit(): void {
     this.accountService.getAuthenticationState().subscribe(account => {
@@ -28,6 +56,13 @@ export class UserDetailComponent implements OnInit {
 
     this.activatedRoute.data.subscribe(({ user }) => {
       this.user = user;
+      if(this.user) {
+        this.postService.findAllByAuthorId(this.user?.id).subscribe(res=>{
+          if(res.body) {
+            this.posts = res.body;
+          }
+        });
+      }
     });
   }
 
@@ -45,6 +80,28 @@ export class UserDetailComponent implements OnInit {
       if(res.ok) {
         this.user!.isFollowed = false;
         this.user!.followerCount!--;
+      }
+    });
+  }
+
+  getFollowers(): void {
+    this.userService.getFollowersByUserLogin(this.user?.login!).subscribe(res=>{
+      if(res.body) {
+        this.followers = res.body;
+        const modalRef = this.modalService.open(ListModalComponent, { size: 'sm', backdrop: true, centered: false });
+        modalRef.componentInstance.title = 'Followers';
+        modalRef.componentInstance.users = this.followers;
+      }
+    });
+  }
+
+  getFollowing(): void {
+    this.userService.getFollowingByUserLogin(this.user?.login!).subscribe(res=>{
+      if(res.body) {
+        this.following = res.body;
+        const modalRef = this.modalService.open(ListModalComponent, { size: 'sm', backdrop: true, centered: false });
+        modalRef.componentInstance.title = 'Following';
+        modalRef.componentInstance.users = this.following;
       }
     });
   }

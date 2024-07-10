@@ -17,6 +17,10 @@ export default class SettingsComponent implements OnInit {
   success = false;
 
   settingsForm = new FormGroup({
+    id: new FormControl(initialAccount.id, {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
     firstName: new FormControl(initialAccount.firstName, {
       nonNullable: true,
       validators: [Validators.required, Validators.minLength(1), Validators.maxLength(50)],

@@ -1,0 +1,25 @@
+<div class="modal-header">
+    <p class="modal-title fw-bold">{{ post?.likeCount }} likes</p>
+    <button type="button" class="btn-close" aria-hidden="true" (click)="cancel()"></button>
+</div>
+<div class="modal-body">
+    <div class="comment-list">
+        <ng-container *ngFor="let comment of comments">
+           <div class="comment-box">
+                <h6 class="author" (click)="navigateTo(post?.author?.login!)"> {{ post?.author?.login }} </h6>
+                <p> {{ comment.content }} </p>
+                <span class="status"> {{ getDifferenceTime(comment.createdDate?.toString()!) }} </span>
+           </div>
+        </ng-container>
+    </div>
+    <form name="commentForm" role="form" novalidate [formGroup]="commentForm">
+        <div class="row">
+          <div class="col-10">
+            <custom-text-input formControlName="content" placeholder="Enter your text here..."></custom-text-input>
+          </div>
+          <div class="col-2">
+            <button class="btn btn-dark" type="button" (click)="createComment()" [disabled]="!commentForm.valid"><fa-icon icon="arrow-right"></fa-icon></button>
+          </div>
+        </div>
+    </form>
+</div>

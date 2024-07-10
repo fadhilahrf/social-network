@@ -22,6 +22,8 @@ public class UserDTO implements Serializable {
 
     private Integer followingCount = 0;
 
+    private Integer postCount = 0;
+
     private Boolean isFollowed = false;
 
     public UserDTO() {
@@ -36,6 +38,7 @@ public class UserDTO implements Serializable {
         this.lastName = user.getLastName();
         this.followerCount = user.getFollowerCount();
         this.followingCount = user.getFollowingCount();
+        this.postCount = user.getPostCount();
     }
 
     public Long getId() {
@@ -84,6 +87,14 @@ public class UserDTO implements Serializable {
 
     public void setFollowingCount(Integer followingCount) {
         this.followingCount = followingCount;
+    }
+
+    public Integer getPostCount() {
+        return postCount;
+    }
+
+    public void setPostCount(Integer postCount) {
+        this.postCount = postCount;
     }
 
     public Boolean getIsFollowed() {

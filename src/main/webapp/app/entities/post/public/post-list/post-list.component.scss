@@ -1,0 +1,13 @@
+.post-author:hover {
+    cursor: pointer;
+}
+
+.dropdown-toggle::after {
+    display: none;
+}
+
+.post-toggle{
+    display: block;
+    position: absolute;
+    border-radius: 50%;
+}

@@ -40,6 +40,12 @@ public class AdminUserDTO implements Serializable {
 
     @Size(min = 2, max = 10)
     private String langKey;
+    
+    private Integer followerCount = 0;
+
+    private Integer followingCount = 0;
+
+    private Integer postCount = 0;
 
     private String createdBy;
 
@@ -64,6 +70,9 @@ public class AdminUserDTO implements Serializable {
         this.activated = user.isActivated();
         this.imageUrl = user.getImageUrl();
         this.langKey = user.getLangKey();
+        this.followerCount = user.getFollowerCount();
+        this.followingCount = user.getFollowingCount();
+        this.postCount = user.getPostCount();
         this.createdBy = user.getCreatedBy();
         this.createdDate = user.getCreatedDate();
         this.lastModifiedBy = user.getLastModifiedBy();
@@ -133,6 +142,30 @@ public class AdminUserDTO implements Serializable {
 
     public void setLangKey(String langKey) {
         this.langKey = langKey;
+    }
+
+    public Integer getFollowerCount() {
+        return followerCount;
+    }
+
+    public void setFollowerCount(Integer followerCount) {
+        this.followerCount = followerCount;
+    }
+
+    public Integer getFollowingCount() {
+        return followingCount;
+    }
+
+    public void setFollowingCount(Integer followingCount) {
+        this.followingCount = followingCount;
+    }
+
+    public Integer getPostCount() {
+        return postCount;
+    }
+
+    public void setPostCount(Integer postCount) {
+        this.postCount = postCount;
     }
 
     public String getCreatedBy() {

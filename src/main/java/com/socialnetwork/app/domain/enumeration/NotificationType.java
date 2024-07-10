@@ -5,6 +5,8 @@ package com.socialnetwork.app.domain.enumeration;
  */
 public enum NotificationType {
     USER_FOLLOWED,
-    POST_LIKE,
+    USER_UNFOLLOWED,
+    POST_LIKED,
+    POST_UNLIKED,
     POST_COMMENT,
 }

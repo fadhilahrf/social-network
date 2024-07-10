@@ -5,6 +5,7 @@ export interface IUser {
   lastName?: string;
   followerCount?: number;
   followingCount?: number;
+  postCount?: number;
   isFollowed?: boolean;
 }
 
@@ -16,6 +17,7 @@ export class User implements IUser {
     public lastName: string,
     public followerCount: number,
     public followingCount: number,
+    public postCount: number,
     public isFollowed: boolean,
   ) {}
 }

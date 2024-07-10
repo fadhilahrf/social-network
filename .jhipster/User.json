@@ -3,7 +3,7 @@
     "changelogDate": "20240607060334"
   },
   "dto": "mapstruct",
-  "entityTableName": "jhi_user",
+  "entityTableName": "user",
   "fields": [
     {
       "fieldName": "followerCount",

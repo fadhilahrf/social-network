@@ -42,7 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
 class NotificationResourceIT {
 
     private static final NotificationType DEFAULT_TYPE = NotificationType.USER_FOLLOWED;
-    private static final NotificationType UPDATED_TYPE = NotificationType.POST_LIKE;
+    private static final NotificationType UPDATED_TYPE = NotificationType.POST_LIKED;
 
     private static final String DEFAULT_DESTINATION = "AAAAAAAAAA";
     private static final String UPDATED_DESTINATION = "BBBBBBBBBB";

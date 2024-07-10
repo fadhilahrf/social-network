@@ -39,6 +39,14 @@ export class UserService {
     return this.http.post<void>(`${this.publicResourceUrl}/user/unfollow/${login}`, {}, { observe: 'response' });
   }
 
+  getFollowersByUserLogin(login: string): Observable<HttpResponse<IUser[]>> {
+    return this.http.get<IUser[]>(`${this.publicResourceUrl}/users/followers/${login}`, { observe: 'response' });
+  }
+
+  getFollowingByUserLogin(login: string): Observable<HttpResponse<IUser[]>> {
+    return this.http.get<IUser[]>(`${this.publicResourceUrl}/users/following/${login}`, { observe: 'response' });
+  }
+
   addUserToCollectionIfMissing<Type extends Partial<IUser> & Pick<IUser, 'id'>>(
     userCollection: Type[],
     ...usersToCheck: (Type | null | undefined)[]

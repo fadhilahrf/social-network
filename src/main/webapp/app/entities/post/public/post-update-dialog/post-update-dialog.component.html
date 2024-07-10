@@ -1,0 +1,15 @@
+<div class="modal-header">
+    <button type="button" class="btn-close" aria-hidden="true" (click)="cancel()"></button>
+</div>
+<div class="modal-body">
+    <form name="editForm" role="form" novalidate [formGroup]="editForm">
+        <div class="row">
+          <div class="col-10">
+            <custom-text-input formControlName="content" placeholder="Enter your text here..."></custom-text-input>
+          </div>
+          <div class="col-2">
+            <button class="btn btn-dark" type="button" (click)="save()" [disabled]="!editForm.valid"><fa-icon icon="arrow-right"></fa-icon></button>
+          </div>
+        </div>
+    </form>
+</div>
