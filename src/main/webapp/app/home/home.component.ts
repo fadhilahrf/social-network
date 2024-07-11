@@ -9,6 +9,8 @@ import { Account } from 'app/core/auth/account.model';
 import { FormBuilder, Validators } from '@angular/forms';
 import { NewPost } from 'app/entities/post/post.model';
 import { PostListComponent } from 'app/entities/post/public/post-list/post-list.component';
+import { UserService } from 'app/entities/user/service/user.service';
+import { IUser } from 'app/entities/user/user.model';
 
 @Component({
   standalone: true,
@@ -22,14 +24,19 @@ export default class HomeComponent implements OnInit, OnDestroy {
 
   account: Account | null = null;
 
+  searchedUsers: IUser[] = [];
+
   postForm = this.fb.group({
     content: ['', [Validators.required]],
   });
+
+  isSearchInputFocused: boolean = false;
 
   private readonly destroy$ = new Subject<void>();
 
   constructor(
     private accountService: AccountService,
+    private userService: UserService, 
     private router: Router,
     private fb: FormBuilder,
   ) {}
@@ -50,6 +57,23 @@ export default class HomeComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  onSearchInputFocused(): void {
+    this.isSearchInputFocused = true;
+  }
+
+  searchUsers(event: any): void {
+    const search = event.target.value;
+    if(search!='') {
+      this.userService.getAll(search).subscribe(res=>{
+        if(res.body) {
+          this.searchedUsers = res.body.filter(user=>user.login!=this.account?.login);
+        }
+      })
+    }else {
+      this.searchedUsers = [];
+    }
+  }
+
   createPost(): void {
     if(this.postForm.get('content')?.value) {
       const newPost: NewPost = {
@@ -68,5 +92,9 @@ export default class HomeComponent implements OnInit, OnDestroy {
         }
       });
     }
+  }
+
+  navigateTo(route: string): void {
+    this.router.navigate([route]);
   }
 }

@@ -76,6 +76,12 @@ export default class NavbarComponent implements OnInit {
       }
       });
     }, ()=>{console.log("error")});
+
+    this.notificationService.countUnreadNotification(this.account!.login).subscribe(res=>{
+      if(res.body) {
+        this.notificationsCount = res.body;
+      }
+    })
   }
 
   collapseNavbar(): void {
@@ -97,7 +103,7 @@ export default class NavbarComponent implements OnInit {
   }
 
   getNotifications(): void {
-    this.notificationService.findAllByReceiver(this.account?.login!).subscribe(res=>{
+    this.notificationService.readAllByReceiver(this.account?.login!).subscribe(res=>{
       if(res.body) {
         this.notificationsCount = 0;
         this.notifications = res.body;

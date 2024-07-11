@@ -1,38 +1,52 @@
 <div class="row d-flex justify-content-center">
-    @if (account == null) {
-      <div class="col-md-9">
-      <div class="alert alert-warning">
-        <span>If you want to </span>
-        <a class="alert-link" (click)="login()">sign in</a
-        ><span
-          >, you can try the default accounts:<br />- Administrator (login=&quot;admin&quot; and password=&quot;admin&quot;) <br />- User
-          (login=&quot;user&quot; and password=&quot;user&quot;).</span
-        >
-      </div>
-
-      <div class="alert alert-warning">
-        <span>You don&apos;t have an account yet?</span>&nbsp;
-        <a class="alert-link" routerLink="/account/register">Register a new account</a>
-      </div>
+  @if (account == null) {
+    <div class="col-md-9">
+    <div class="alert alert-warning">
+      <span>If you want to </span>
+      <a class="alert-link" (click)="login()">sign in</a
+      ><span
+        >, you can try the default accounts:<br />- Administrator (login=&quot;admin&quot; and password=&quot;admin&quot;) <br />- User
+        (login=&quot;user&quot; and password=&quot;user&quot;).</span
+      >
     </div>
-    } @else {
-      <div class="col-7">
-        <div class="mb-2 card">
-          <div class="card-body">
-            <form name="postForm" role="form" novalidate [formGroup]="postForm">
-              <h4><b>What's on your mind?</b></h4>
-              <div class="row">
-                <div class="col-10">
-                  <custom-text-input formControlName="content" placeholder="Enter your text here..."></custom-text-input>
-                </div>
-                <div class="col-2">
-                  <button class="btn btn-dark" type="button" (click)="createPost()" [disabled]="!postForm.valid"><fa-icon icon="arrow-right"></fa-icon></button>
-                </div>
-              </div>
-            </form>
+
+    <div class="alert alert-warning">
+      <span>You don&apos;t have an account yet?</span>&nbsp;
+      <a class="alert-link" routerLink="/account/register">Register a new account</a>
+    </div>
+  </div>
+  } @else {
+    <div class="col-7">
+      <div>
+        <form id="searchForm" name="searchForm" >
+          <div class="search-input p-2">
+            <input (focus)="onSearchInputFocused()" (keyup)="searchUsers($event)" autocomplete="off" type="text" id="search" placeholder="search user" name="search">
           </div>
-        </div>
-        <post-list [account]="account"></post-list>
+        </form>
+        <ul class="list-group mb-2" *ngIf="isSearchInputFocused">
+          <ng-container *ngFor="let searchedUser of searchedUsers; let i=index">
+              <li class="list-group-item user-item" (click)="navigateTo(searchedUser.login!)">
+                  <b>{{ searchedUser.login }}</b>
+              </li>
+          </ng-container>
+        </ul>
       </div>
-    }
+      <div class="mb-2 card">
+        <div class="card-body">
+          <form name="postForm" role="form" novalidate [formGroup]="postForm">
+            <h4><b>What's on your mind?</b></h4>
+            <div class="row">
+              <div class="col-10">
+                <custom-text-input formControlName="content" placeholder="Enter your text here..."></custom-text-input>
+              </div>
+              <div class="col-2">
+                <button class="btn btn-dark" type="button" (click)="createPost()" [disabled]="!postForm.valid"><fa-icon icon="arrow-right"></fa-icon></button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <post-list [account]="account"></post-list>
+    </div>
+  }
 </div>

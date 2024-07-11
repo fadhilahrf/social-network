@@ -28,6 +28,8 @@ public class NotificationDTO implements Serializable {
 
     private Instant createdDate;
 
+    private Object object;
+
     public NotificationDTO() {
     }
 
@@ -39,6 +41,7 @@ public class NotificationDTO implements Serializable {
         this.isRead = notification.getIsRead();
         this.sender = new UserDTO(notification.getSender());
         this.receiver =  new UserDTO(notification.getReceiver());
+        this.createdDate = notification.getCreatedDate();
     }
 
     public Long getId() {
@@ -103,6 +106,14 @@ public class NotificationDTO implements Serializable {
 
     public void setCreatedDate(Instant createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public Object getObject() {
+        return object;
+    }
+
+    public void setObject(Object object) {
+        this.object = object;
     }
 
     @Override

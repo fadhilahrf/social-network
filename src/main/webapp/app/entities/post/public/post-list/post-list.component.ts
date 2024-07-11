@@ -107,7 +107,7 @@ export class PostListComponent implements OnInit {
   openEditDialog(post: IPost): void {
     const modalRef = this.modalService.open(PostUpdateDialogComponent, { size: 'md', backdrop: true });
     modalRef.componentInstance.post = post;
-    modalRef.componentInstance.updatePost.subscribe((updatedPost: IPost) => {
+    modalRef.componentInstance.updatedPost.subscribe((updatedPost: IPost) => {
       if (updatedPost) {
         this.postService.update(updatedPost).subscribe(res=>{
           if(res.body) {
@@ -122,7 +122,7 @@ export class PostListComponent implements OnInit {
     });
   }
 
-  delete(post: IPost): void {
+  openPostDeleteDialog(post: IPost): void {
     const modalRef = this.modalService.open(PostDeleteDialogComponent, { size: 'md', backdrop: 'static' });
     modalRef.componentInstance.post = post;
     modalRef.componentInstance.isPublic = true;
@@ -134,8 +134,14 @@ export class PostListComponent implements OnInit {
   }
 
   openCommentDialog(post: IPost): void {
-    const modalRef = this.modalService.open(CommentDialogComponent, { size: 'sm', backdrop: true });
+    const modalRef = this.modalService.open(CommentDialogComponent, { size: 'md', backdrop: true });
     modalRef.componentInstance.post = post;
+    modalRef.componentInstance.account = this.account;
+    modalRef.componentInstance.commentCount.subscribe((commentCount: number) => {
+      if (commentCount) {
+        post.commentCount = commentCount;
+      }
+    });
   }
 
   getDateTime(date: string): string { 

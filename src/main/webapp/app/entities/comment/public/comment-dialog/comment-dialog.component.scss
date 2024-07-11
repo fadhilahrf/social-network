@@ -20,6 +20,17 @@
     }
 }
 
-.author:hover {
-    cursor: pointer;
+.author {
+    text-decoration: none;
+    color: black;
+}
+
+.dropdown-toggle::after {
+    display: none;
+}
+
+.comment-toggle{
+    display: block;
+    position: absolute;
+    border-radius: 50%;
 }

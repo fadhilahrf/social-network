@@ -50,6 +50,14 @@ export class NotificationService {
     return this.http.get<INotification[]>(`${this.resourceUrl}/receiver/${login}`, { observe: 'response' });
   }
 
+  readAllByReceiver(login: string): Observable<EntityArrayResponseType> {
+    return this.http.get<INotification[]>(`${this.resourceUrl}/read/${login}`, { observe: 'response' });
+  }
+
+  countUnreadNotification(login: string): Observable<HttpResponse<number>> {
+    return this.http.get<number>(`${this.resourceUrl}/count-unread/${login}`, { observe: 'response' });
+  }
+
   delete(id: number): Observable<HttpResponse<{}>> {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }

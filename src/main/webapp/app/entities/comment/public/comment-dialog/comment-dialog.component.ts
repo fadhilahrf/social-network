@@ -1,13 +1,16 @@
-import { Component, forwardRef, OnInit } from '@angular/core';
+import { Component, EventEmitter, forwardRef, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormsModule, Validators } from '@angular/forms';
 import SharedModule from 'app/shared/shared.module';
 import { CommentService } from '../../service/comment.service';
 import { IPost } from 'app/entities/post/post.model';
 import { IComment, NewComment } from '../../comment.model';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { Account } from 'app/core/auth/account.model';
+import { ITEM_DELETED_EVENT } from 'app/config/navigation.constants';
+import { CommentDeleteDialogComponent } from '../../delete/comment-delete-dialog.component';
 
 @Component({
   selector: 'comment-dialog',
@@ -17,9 +20,13 @@ import relativeTime from 'dayjs/plugin/relativeTime';
   styleUrl: './comment-dialog.component.scss'
 })
 export class CommentDialogComponent implements OnInit {
+  @Output() commentCount: EventEmitter<any> = new EventEmitter();
+
   post?: IPost;
 
   comments: IComment[] = [];
+
+  account?: Account;
 
   commentForm = this.fb.group({
     content: ['', [Validators.required]],
@@ -30,6 +37,7 @@ export class CommentDialogComponent implements OnInit {
     private commentService: CommentService,
     private router: Router,
     private fb: FormBuilder,
+    private modalService: NgbModal,
   ) {
     dayjs.extend(relativeTime);
   }
@@ -50,14 +58,15 @@ export class CommentDialogComponent implements OnInit {
         id: null,
         content: this.commentForm.get('content')?.value,
         likeCount: 0,
-        author: this.post?.author,
+        author: this.account,
         post: this.post
       };
 
-      this.commentService.create(newComment).subscribe(res=>{
+      this.commentService.send(newComment).subscribe(res=>{
         if(res.body) {
           this.comments.unshift(res.body);
           this.commentForm.reset();
+          this.commentCount.emit(this.comments.length);
         }
       })
     }
@@ -76,5 +85,17 @@ export class CommentDialogComponent implements OnInit {
     const givenDate = dayjs(date);
     const now = dayjs();
     return givenDate.from(now);
+  }
+
+  openCommentDeleteDialog(comment: IComment): void {
+    const modalRef = this.modalService.open(CommentDeleteDialogComponent, { size: 'md', backdrop: 'static' });
+    modalRef.componentInstance.comment =comment;
+    modalRef.componentInstance.isPublic = true;
+    modalRef.closed.subscribe(reason => {
+      if (reason === ITEM_DELETED_EVENT) {
+        this.comments = this.comments.filter(c=>c.id!=comment.id);
+        this.commentCount.emit(this.comments.length);
+      }
+    });
   }
 }

@@ -27,6 +27,10 @@ export class UserService {
     return o1 && o2 ? o1.id === o2.id : o1 === o2;
   }
 
+  getAll(search?: string): Observable<HttpResponse<IUser[]>> {
+    return this.http.get<IUser[]>(`${this.publicResourceUrl}/users/all${search? '?search='+search:''}`, { observe: 'response' });
+  }
+
   findPublicUserByLogin(login: string): Observable<HttpResponse<IUser>> {
     return this.http.get<IUser>(`${this.publicResourceUrl}/users/${login}`, { observe: 'response' });
   }

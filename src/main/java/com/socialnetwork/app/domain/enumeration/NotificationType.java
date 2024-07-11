@@ -8,5 +8,5 @@ public enum NotificationType {
     USER_UNFOLLOWED,
     POST_LIKED,
     POST_UNLIKED,
-    POST_COMMENT,
+    POST_COMMENTED,
 }

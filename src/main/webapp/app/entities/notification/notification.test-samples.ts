@@ -6,7 +6,7 @@ export const sampleWithRequiredData: INotification = {
 
 export const sampleWithPartialData: INotification = {
   id: 26813,
-  type: 'POST_COMMENT',
+  type: 'POST_COMMENTED',
 };
 
 export const sampleWithFullData: INotification = {

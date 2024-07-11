@@ -25,6 +25,10 @@ export class CommentService {
     return this.http.post<IComment>(this.resourceUrl, comment, { observe: 'response' });
   }
 
+  send(comment: NewComment): Observable<EntityResponseType> {
+    return this.http.post<IComment>(`${this.resourceUrl}/send`, comment, { observe: 'response' });
+  }
+
   update(comment: IComment): Observable<EntityResponseType> {
     return this.http.put<IComment>(`${this.resourceUrl}/${this.getCommentIdentifier(comment)}`, comment, { observe: 'response' });
   }
@@ -48,6 +52,10 @@ export class CommentService {
 
   delete(id: number): Observable<HttpResponse<{}>> {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  }
+
+  deleteFromPost(id: number): Observable<HttpResponse<{}>> {
+    return this.http.delete(`${this.resourceUrl}/from-post/${id}`, { observe: 'response' });
   }
 
   getCommentIdentifier(comment: Pick<IComment, 'id'>): number {

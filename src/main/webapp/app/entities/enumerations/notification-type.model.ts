@@ -3,5 +3,5 @@ export enum NotificationType {
 
   POST_LIKE = 'POST_LIKE',
 
-  POST_COMMENT = 'POST_COMMENT',
+  POST_COMMENTED = 'POST_COMMENTED',
 }

@@ -117,6 +117,33 @@ public class NotificationService {
        return new ArrayList<>();
     }
 
+    public List<NotificationDTO> readAllByReceiver(String login) {
+        log.debug("Request to read all Notifications by Receiver");
+
+        Optional<User> userOptional = userRepository.findOneByLogin(login);
+        if(userOptional.isPresent()) {
+            return notificationRepository.findAllByReceiverOrderByCreatedDateDesc(userOptional.get()).stream().map(notification->{
+                notification.setIsRead(true);
+                notification = notificationRepository.save(notification);
+
+                return new NotificationDTO(notification);
+            }).toList();
+        }
+
+       return new ArrayList<>();
+    }
+
+    public Integer countUnreadNotificationByReceiver(String login) {
+        log.debug("Request to count unread Notifications by Receiver");
+
+        Optional<User> userOptional = userRepository.findOneByLogin(login);
+        if(userOptional.isPresent()) {
+            return notificationRepository.countByIsReadAndReceiver(false, userOptional.get());
+        }
+
+       return 0;
+    }
+
     /**
      * Get one notification by id.
      *

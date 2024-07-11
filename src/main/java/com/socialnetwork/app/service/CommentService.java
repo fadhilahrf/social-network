@@ -1,8 +1,14 @@
 package com.socialnetwork.app.service;
 
 import com.socialnetwork.app.domain.Comment;
+import com.socialnetwork.app.domain.Notification;
+import com.socialnetwork.app.domain.Post;
+import com.socialnetwork.app.domain.enumeration.NotificationType;
 import com.socialnetwork.app.repository.CommentRepository;
+import com.socialnetwork.app.repository.NotificationRepository;
+import com.socialnetwork.app.repository.PostRepository;
 import com.socialnetwork.app.service.dto.CommentDTO;
+import com.socialnetwork.app.service.dto.NotificationDTO;
 import com.socialnetwork.app.service.mapper.CommentMapper;
 
 import java.util.List;
@@ -25,10 +31,16 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
 
+    private final PostRepository postRepository;
+
+    private final NotificationRepository notificationRepository;
+
     private final CommentMapper commentMapper;
 
-    public CommentService(CommentRepository commentRepository, CommentMapper commentMapper) {
+    public CommentService(CommentRepository commentRepository, PostRepository postRepository, NotificationRepository notificationRepository, CommentMapper commentMapper) {
         this.commentRepository = commentRepository;
+        this.postRepository = postRepository;
+        this.notificationRepository = notificationRepository;
         this.commentMapper = commentMapper;
     }
 
@@ -41,8 +53,40 @@ public class CommentService {
     public CommentDTO save(CommentDTO commentDTO) {
         log.debug("Request to save Comment : {}", commentDTO);
         Comment comment = commentMapper.toEntity(commentDTO);
+        Post post = postRepository.findById(comment.getPost().getId()).get();
         comment = commentRepository.save(comment);
+        post.setCommentCount(post.getCommentCount()+1);
+        postRepository.save(post);
         return commentMapper.toDto(comment);
+    }
+
+    public Optional<NotificationDTO> send(CommentDTO commentDTO) {
+        log.debug("Request to send Comment : {}", commentDTO);
+        Comment comment = commentMapper.toEntity(commentDTO);
+        Optional<Post> postOptional = postRepository.findById(comment.getPost().getId());
+        
+        if(postOptional.isPresent()) {
+            Post post = postOptional.get();
+            comment = commentRepository.save(comment);
+            post.setCommentCount(post.getCommentCount()+1);
+            post = postRepository.save(post);
+ 
+            Notification notification = new Notification();
+            notification.setType(NotificationType.POST_COMMENTED);
+            notification.setDestination("/post/"+post.getId()+"/comment/"+comment.getId());
+            notification.setSender(comment.getAuthor());
+            notification.setReceiver(post.getAuthor());
+            notification.setMessage("<b>"+comment.getAuthor().getLogin()+"</b> commented your post");
+            notification.setIsRead(false);
+
+            notification = notificationRepository.save(notification);
+            
+            NotificationDTO notificationDTO = new NotificationDTO(notification);
+            notificationDTO.setObject(commentMapper.toDto(comment));
+
+            return Optional.of(notificationDTO);
+        }
+        return Optional.empty();
     }
 
     /**
@@ -124,5 +168,29 @@ public class CommentService {
     public void delete(Long id) {
         log.debug("Request to delete Comment : {}", id);
         commentRepository.deleteById(id);
+    }
+
+    public Optional<NotificationDTO> deleteFromPost(Long id) {
+        log.debug("Request to delete Comment from post: {}", id);
+
+        Optional<Comment> commentOptional = commentRepository.findById(id);
+
+        if(commentOptional.isPresent()) {
+            commentRepository.delete(commentOptional.get());
+            Post post = postRepository.findById(commentOptional.get().getPost().getId()).get();
+            post.setCommentCount(post.getCommentCount()-1);
+
+            post = postRepository.save(post);
+
+            Optional<Notification> notificationOptional = notificationRepository.findOneByDestinationAndTypeAndSenderAndReceiver("/post/"+commentOptional.get().getPost().getId()+"/comment/"+commentOptional.get().getId(), NotificationType.POST_COMMENTED, commentOptional.get().getAuthor(), post.getAuthor());
+        
+            if(notificationOptional.isPresent()) {
+                notificationRepository.delete(notificationOptional.get());
+    
+                return Optional.of(notificationOptional.get()).map(NotificationDTO::new);
+            }
+        }
+
+        return Optional.empty(); 
     }
 }

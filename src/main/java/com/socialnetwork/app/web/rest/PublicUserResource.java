@@ -3,6 +3,9 @@ package com.socialnetwork.app.web.rest;
 import com.socialnetwork.app.service.UserService;
 import com.socialnetwork.app.service.dto.NotificationDTO;
 import com.socialnetwork.app.service.dto.UserDTO;
+
+import io.micrometer.common.util.StringUtils;
+
 import java.util.*;
 
 import org.slf4j.Logger;
@@ -57,6 +60,21 @@ public class PublicUserResource {
 
     private boolean onlyContainsAllowedProperties(Pageable pageable) {
         return pageable.getSort().stream().map(Sort.Order::getProperty).allMatch(ALLOWED_ORDERED_PROPERTIES::contains);
+    }
+
+    @GetMapping("/users/all")
+    public ResponseEntity<List<UserDTO>> getAllPublicUsers(@RequestParam(value = "search", required = false) String search) {
+        log.debug("REST request to get all public User names");
+
+        List<UserDTO> users;
+
+        if(StringUtils.isBlank(search)) {
+            users = userService.getAllPublicUsers();
+        }else {
+            users = userService.getAllByLoginLike(search);
+        }
+        
+        return ResponseEntity.ok(users);
     }
 
     /**

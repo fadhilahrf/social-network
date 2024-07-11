@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, forwardRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -10,10 +10,12 @@ import { CommentService } from '../service/comment.service';
 @Component({
   standalone: true,
   templateUrl: './comment-delete-dialog.component.html',
-  imports: [SharedModule, FormsModule],
+  imports: [forwardRef(() => SharedModule)],
 })
 export class CommentDeleteDialogComponent {
   comment?: IComment;
+
+  isPublic = false;
 
   constructor(
     protected commentService: CommentService,
@@ -25,8 +27,17 @@ export class CommentDeleteDialogComponent {
   }
 
   confirmDelete(id: number): void {
-    this.commentService.delete(id).subscribe(() => {
-      this.activeModal.close(ITEM_DELETED_EVENT);
-    });
+    if(!this.isPublic) {
+      this.commentService.delete(id).subscribe(() => {
+        this.activeModal.close(ITEM_DELETED_EVENT);
+      });
+    } else {
+      this.commentService.deleteFromPost(id).subscribe(res=> {
+        if(res.ok) {
+          this.activeModal.close(ITEM_DELETED_EVENT);
+        }
+      });
+    }
+
   }
 }

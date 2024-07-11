@@ -3,6 +3,7 @@ package com.socialnetwork.app.web.rest;
 import com.socialnetwork.app.repository.CommentRepository;
 import com.socialnetwork.app.service.CommentService;
 import com.socialnetwork.app.service.dto.CommentDTO;
+import com.socialnetwork.app.service.dto.NotificationDTO;
 import com.socialnetwork.app.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
@@ -41,10 +43,13 @@ public class CommentResource {
     private final CommentService commentService;
 
     private final CommentRepository commentRepository;
+    
+    private final SimpMessagingTemplate messagingTemplate;
 
-    public CommentResource(CommentService commentService, CommentRepository commentRepository) {
+    public CommentResource(CommentService commentService, CommentRepository commentRepository, SimpMessagingTemplate messagingTemplate) {
         this.commentService = commentService;
         this.commentRepository = commentRepository;
+        this.messagingTemplate = messagingTemplate;
     }
 
     /**
@@ -65,6 +70,26 @@ public class CommentResource {
             .created(new URI("/api/comments/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
             .body(result);
+    }
+
+    @PostMapping("/send")
+    public ResponseEntity<CommentDTO> sendComment(@Valid @RequestBody CommentDTO commentDTO) {
+        log.debug("REST request to send Comment : {}", commentDTO);
+
+        Optional<NotificationDTO> notificationOptional = commentService.send(commentDTO);
+
+         if(notificationOptional.isPresent()) {
+            if(!notificationOptional.get().getReceiver().getLogin().equals(notificationOptional.get().getSender().getLogin())) {
+                messagingTemplate.convertAndSendToUser(
+                    notificationOptional.get().getReceiver().getLogin(), "/notification",
+                    notificationOptional.get()
+                );
+            }
+
+            return ResponseEntity.ok().body((CommentDTO) notificationOptional.get().getObject());
+         }
+
+         return ResponseEntity.badRequest().body(null);
     }
 
     /**
@@ -193,5 +218,17 @@ public class CommentResource {
             .noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    @DeleteMapping("/from-post/{id}")
+    public ResponseEntity<?> deleteCommentFromPost(@PathVariable("id") Long id) {
+        log.debug("REST request to delete Comment from post : {}", id);
+        Optional<NotificationDTO> notificationOptional = commentService.deleteFromPost(id);
+
+        if(notificationOptional.isPresent()) {
+            return ResponseEntity.ok().body(null);
+         }
+
+         return ResponseEntity.badRequest().body(null);
     }
 }

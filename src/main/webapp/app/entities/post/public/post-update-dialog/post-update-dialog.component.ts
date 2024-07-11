@@ -12,7 +12,7 @@ import SharedModule from 'app/shared/shared.module';
   styleUrl: './post-update-dialog.component.scss'
 })
 export class PostUpdateDialogComponent implements OnInit {
-  @Output() updatePost: EventEmitter<any> = new EventEmitter();
+  @Output() updatedPost: EventEmitter<any> = new EventEmitter();
 
   post?: IPost | null;
 
@@ -36,12 +36,12 @@ export class PostUpdateDialogComponent implements OnInit {
 
   save(): void {
     if(this.editForm.valid) {
-      const updatedPost: IPost = {
+      const editedPost: IPost = {
         ...this.post,
         id: Number(this.editForm.get('id')?.value),
         content: this.editForm.get('content')?.value
       };
-      this.updatePost.emit(updatedPost);
+      this.updatedPost.emit(editedPost);
       this.activeModal.close();
     }
   }

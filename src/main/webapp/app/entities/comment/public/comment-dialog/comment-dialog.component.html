@@ -4,13 +4,37 @@
 </div>
 <div class="modal-body">
     <div class="comment-list">
-        <ng-container *ngFor="let comment of comments">
-           <div class="comment-box">
-                <h6 class="author" (click)="navigateTo(post?.author?.login!)"> {{ post?.author?.login }} </h6>
+      <ul class="list-group">
+        <li *ngFor="let comment of comments" class="comment-box">
+            <div>
+              <div *ngIf="account && (comment.author?.login==account.login)"
+                      ngbDropdown
+                      class="dropdown d-flex justify-content-end"
+                      display="dynamic"
+                >
+                <a class="nav-link dropdown-toggle comment-toggle" ngbDropdownToggle href="javascript:void(0);" [id]="'comment-menu-toggle-'+comment.id">
+                    <fa-icon icon="ellipsis" [rotate]="90"></fa-icon>
+                </a>
+                <ul class="dropdown-menu" ngbDropdownMenu>
+                  <li>
+                      <a
+                      class="dropdown-item"
+                      (click)="openCommentDeleteDialog(comment)"
+                      >
+                        <span>Delete</span>
+                      </a>
+                  </li>
+                </ul>
+              </div>
+              <a class="author" (click)="navigateTo(comment?.author?.login!)"> {{ comment?.author?.login }} </a>
+              <div >
                 <p> {{ comment.content }} </p>
                 <span class="status"> {{ getDifferenceTime(comment.createdDate?.toString()!) }} </span>
-           </div>
-        </ng-container>
+              </div>
+            </div>
+        </li>
+    </ul>
+        
     </div>
     <form name="commentForm" role="form" novalidate [formGroup]="commentForm">
         <div class="row">

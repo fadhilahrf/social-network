@@ -313,6 +313,14 @@ public class UserService {
         return authorityRepository.findAll().stream().map(Authority::getName).toList();
     }
 
+    public List<UserDTO> getAllPublicUsers() {
+        return userRepository.findAll().stream().map(UserDTO::new).collect(Collectors.toList());
+    }
+    
+    public List<UserDTO> getAllByLoginLike(String search) {
+        return userRepository.findAllByLoginLike(search).stream().map(UserDTO::new).collect(Collectors.toList());
+    }
+
     public UserDTO getPublicUserByLogin(String login) {
         return userRepository.findOneByLogin(login).map(user-> {
             UserDTO userDTO = new UserDTO(user);

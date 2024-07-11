@@ -34,4 +34,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u.following FROM User u WHERE u.login = :login")
     List<User> findFollowingByUserLogin(String login);
+
+    @Query("SELECT u FROM User u WHERE u.login LIKE %:login%")
+    List<User> findAllByLoginLike(String login);
 }

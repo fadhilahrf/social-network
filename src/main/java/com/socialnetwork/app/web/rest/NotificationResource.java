@@ -164,6 +164,18 @@ public class NotificationResource {
         return ResponseEntity.ok().body(notificationService.findAllByReceiver(login));
     }
 
+    @GetMapping("/read/{login}")
+    public ResponseEntity<List<NotificationDTO>> readAllNotificationsByReceiver(@PathVariable("login") String login) {
+        log.debug("REST request to read Notifications by Receiver");
+        return ResponseEntity.ok().body(notificationService.readAllByReceiver(login));
+    }
+
+    @GetMapping("/count-unread/{login}")
+    public ResponseEntity<Integer> countUnreadNotificationsByReceiver(@PathVariable("login") String login) {
+        log.debug("REST request to read Notifications by Receiver");
+        return ResponseEntity.ok().body(notificationService.countUnreadNotificationByReceiver(login));
+    }
+
     /**
      * {@code GET  /notifications/:id} : get the "id" notification.
      *

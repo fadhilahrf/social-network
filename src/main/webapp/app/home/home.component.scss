@@ -21,3 +21,22 @@ Main page styles
     background-size: contain;
   }
 }
+
+.search-input {
+  display: flex;
+  width: auto;
+  input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      
+      &:focus {
+          outline: none;
+      }
+  }
+}
+
+.user-item {
+  cursor: pointer;
+}
