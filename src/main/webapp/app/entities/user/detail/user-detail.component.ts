@@ -5,9 +5,8 @@ import { IUser } from '../user.model';
 import { UserService } from '../service/user.service';
 import { Account } from 'app/core/auth/account.model';
 import { AccountService } from 'app/core/auth/account.service';
-import { IPost, NewPost } from 'app/entities/post/post.model';
+import { IPost } from 'app/entities/post/post.model';
 import { PostService } from 'app/entities/post/service/post.service';
-import { StompService } from 'app/shared/service/stomp.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ListModalComponent } from '../modal/list-modal/list-modal.component';
@@ -40,10 +39,8 @@ export class UserDetailComponent implements OnInit {
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private router: Router, 
     private userService: UserService, 
     private accountService: AccountService,  
-    // private stompService: StompService, 
     private postService: PostService,
     private fb: FormBuilder,
     private modalService: NgbModal,

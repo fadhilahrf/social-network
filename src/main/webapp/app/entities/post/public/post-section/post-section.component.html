@@ -1,0 +1,36 @@
+<div>
+    <div *ngIf="account && (post?.author?.login==account.login)"
+            ngbDropdown
+            class="dropdown d-flex justify-content-end"
+            display="dynamic"
+        >
+            <a class="nav-link dropdown-toggle post-toggle" ngbDropdownToggle href="javascript:void(0);" [id]="'post-menu-toggle-'+post?.id">
+                <fa-icon icon="ellipsis" [rotate]="90"></fa-icon>
+            </a>
+            <ul class="dropdown-menu" ngbDropdownMenu>
+                <li>
+                    <a
+                    class="dropdown-item"
+                    (click)="openEditDialog()"
+                    >
+                    <span>Edit</span>
+                    </a>
+                </li>
+                <li>
+                    <a
+                    class="dropdown-item"
+                    (click)="openPostDeleteDialog()"
+                    >
+                    <span>Delete</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <a class="h5 fw-bold post-author" (click)="navigateTo(post?.author?.login!)"> {{ post?.author?.login }} </a>
+</div>
+<small> {{ getDateTime(post?.createdDate!.toString()) }} </small>
+<h6> {{ post?.content }} </h6>
+<div class="d-flex">
+    <button class="btn p-0" (click)="likeToggle()"><small> {{ post?.likeCount }} </small><fa-icon icon="thumbs-up" [ngStyle]="{ color: post?.likedByMe ? 'black':'grey'}"></fa-icon></button>
+    <button *ngIf="isInList" class="btn p-0 mx-3" (click)="openCommentDialog()"><small> {{ post?.commentCount }} </small><fa-icon icon="comment-dots" [ngStyle]="{ color: 'grey' }"></fa-icon></button>
+</div>

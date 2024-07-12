@@ -3,43 +3,7 @@
     <ng-container *ngIf="posts.length>0">
         <ul class="list-group">
             <li *ngFor="let post of posts" class="list-group-item">
-                <div>
-                    <div *ngIf="account && (post.author?.login==account.login)"
-                            ngbDropdown
-                            class="dropdown d-flex justify-content-end"
-                            display="dynamic"
-                        >
-                            <a class="nav-link dropdown-toggle post-toggle" ngbDropdownToggle href="javascript:void(0);" [id]="'post-menu-toggle-'+post.id">
-                                <fa-icon icon="ellipsis" [rotate]="90"></fa-icon>
-                            </a>
-                            <ul class="dropdown-menu" ngbDropdownMenu>
-                                <li>
-                                    <a
-                                    class="dropdown-item"
-                                    (click)="openEditDialog(post)"
-                                    >
-                                    <span>Edit</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                    class="dropdown-item"
-                                    (click)="openPostDeleteDialog(post)"
-                                    >
-                                    <span>Delete</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <h5 class="fw-bold post-author" (click)="navigateTo(post.author?.login!)"> {{ post.author?.login }} </h5>
-                </div>
-                
-                <small> {{ getDateTime(post.createdDate!.toString()) }} </small>
-                <h6> {{ post.content }} </h6>
-                <div class="d-flex">
-                    <button class="btn p-0" (click)="likeToggle(post)"><small> {{ post.likeCount }} </small><fa-icon icon="thumbs-up" [ngStyle]="{ color: post.likedByMe ? 'black':'grey'}"></fa-icon></button>
-                    <button class="btn p-0 mx-3" (click)="openCommentDialog(post)"><small> {{ post.commentCount }} </small><fa-icon icon="comment-dots" [ngStyle]="{ color: 'grey' }"></fa-icon></button>
-                </div>
+                <post-section [post]="post" [account]="account" [isInList]="true" (deletedPost)="deletePost($event)"></post-section>
             </li>
         </ul>
     </ng-container>

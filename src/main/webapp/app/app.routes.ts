@@ -38,6 +38,10 @@ const routes: Routes = [
   },
   {
     path: '',
+    loadChildren: () => import(`./entities/public.routes`),
+  },
+  {
+    path: '',
     loadChildren: () => import(`./entities/entity.routes`),
   },
   ...errorRoute,

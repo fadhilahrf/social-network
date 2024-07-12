@@ -2,10 +2,6 @@ import { Routes } from '@angular/router';
 
 const routes: Routes = [
   {
-    path: '',
-    loadChildren: () => import('./user/user.routes'),
-  },
-  {
     path: 'notification',
     data: { pageTitle: 'Notifications' },
     loadChildren: () => import('./notification/notification.routes'),

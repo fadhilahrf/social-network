@@ -159,7 +159,7 @@ public class PostService {
 
                 Notification notification = new Notification();
                 notification.setType(NotificationType.POST_LIKED);
-                notification.setDestination("/post/"+post.getId());
+                notification.setDestination(post.getAuthor().getLogin()+"/post/"+post.getId());
                 notification.setSender(userOptional.get());
                 notification.setReceiver(post.getAuthor());
                 notification.setMessage("<b>"+userOptional.get().getLogin()+"</b> liked your post.");
@@ -188,7 +188,7 @@ public class PostService {
 
                 postRepository.save(post);
 
-                Optional<Notification> notificationOptional = notificationRepository.findOneByDestinationAndTypeAndSenderAndReceiver("/post/"+post.getId(), NotificationType.POST_LIKED, userOptional.get(), post.getAuthor());
+                Optional<Notification> notificationOptional = notificationRepository.findOneByDestinationAndTypeAndSenderAndReceiver(post.getAuthor().getLogin()+"/post/"+post.getId(), NotificationType.POST_LIKED, userOptional.get(), post.getAuthor());
 
                 if(notificationOptional.isPresent()) {
                     notificationRepository.delete(notificationOptional.get());

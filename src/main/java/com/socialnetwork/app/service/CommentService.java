@@ -73,7 +73,7 @@ public class CommentService {
  
             Notification notification = new Notification();
             notification.setType(NotificationType.POST_COMMENTED);
-            notification.setDestination("/post/"+post.getId()+"/comment/"+comment.getId());
+            notification.setDestination(post.getAuthor().getLogin()+"/post/"+post.getId()+"/comment/"+comment.getId());
             notification.setSender(comment.getAuthor());
             notification.setReceiver(post.getAuthor());
             notification.setMessage("<b>"+comment.getAuthor().getLogin()+"</b> commented your post");
@@ -182,7 +182,7 @@ public class CommentService {
 
             post = postRepository.save(post);
 
-            Optional<Notification> notificationOptional = notificationRepository.findOneByDestinationAndTypeAndSenderAndReceiver("/post/"+commentOptional.get().getPost().getId()+"/comment/"+commentOptional.get().getId(), NotificationType.POST_COMMENTED, commentOptional.get().getAuthor(), post.getAuthor());
+            Optional<Notification> notificationOptional = notificationRepository.findOneByDestinationAndTypeAndSenderAndReceiver(post.getAuthor().getLogin()+"/post/"+commentOptional.get().getPost().getId()+"/comment/"+commentOptional.get().getId(), NotificationType.POST_COMMENTED, commentOptional.get().getAuthor(), post.getAuthor());
         
             if(notificationOptional.isPresent()) {
                 notificationRepository.delete(notificationOptional.get());
