@@ -3,7 +3,7 @@
     <ng-container *ngIf="posts.length>0">
         <ul class="list-group">
             <li *ngFor="let post of posts" class="list-group-item">
-                <post-section [post]="post" [account]="account" [isInList]="true" (deletedPost)="deletePost($event)"></post-section>
+                <post-item [post]="post" [account]="account" [isInList]="true" (deletedPost)="deletePost($event)"></post-item>
             </li>
         </ul>
     </ng-container>

@@ -17,7 +17,7 @@ import { IUser } from 'app/entities/user/user.model';
   selector: 'jhi-home',
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
-  imports: [SharedModule, RouterModule],
+  imports: [SharedModule, PostListComponent],
 })
 export default class HomeComponent implements OnInit, OnDestroy {
   @ViewChild(PostListComponent) postContainer!: PostListComponent;

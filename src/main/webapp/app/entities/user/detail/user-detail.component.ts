@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import SharedModule from 'app/shared/shared.module';
 import { IUser } from '../user.model';
 import { UserService } from '../service/user.service';
@@ -15,7 +15,7 @@ import { PostListComponent } from 'app/entities/post/public/post-list/post-list.
 @Component({
   selector: 'jhi-user-detail',
   standalone: true,
-  imports: [SharedModule],
+  imports: [SharedModule, PostListComponent],
   templateUrl: './user-detail.component.html',
   styleUrl: './user-detail.component.scss'
 })

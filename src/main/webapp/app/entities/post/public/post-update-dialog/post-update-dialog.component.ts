@@ -1,4 +1,4 @@
-import { Component, EventEmitter, forwardRef, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { IPost } from '../../post.model';
@@ -7,7 +7,7 @@ import SharedModule from 'app/shared/shared.module';
 @Component({
   selector: 'update-dialog',
   standalone: true,
-  imports: [forwardRef(() => SharedModule)],
+  imports: [SharedModule],
   templateUrl: './post-update-dialog.component.html',
   styleUrl: './post-update-dialog.component.scss'
 })

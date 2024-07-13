@@ -1,0 +1,26 @@
+<div class="comment-box">
+    <div *ngIf="account && (comment!.author?.login==account.login)"
+            ngbDropdown
+            class="dropdown d-flex justify-content-end"
+            display="dynamic"
+      >
+      <a class="nav-link dropdown-toggle comment-toggle" ngbDropdownToggle href="javascript:void(0);" [id]="'comment-menu-toggle-'+comment!.id">
+          <fa-icon icon="ellipsis" [rotate]="90"></fa-icon>
+      </a>
+      <ul class="dropdown-menu" ngbDropdownMenu>
+        <li>
+            <a
+            class="dropdown-item"
+            (click)="openCommentDeleteDialog()"
+            >
+              <span>Delete</span>
+            </a>
+        </li>
+      </ul>
+    </div>
+    <a class="author" (click)="navigateTo(comment?.author?.login!)"> {{ comment?.author?.login }} </a>
+    <div >
+      <p> {{ comment!.content }} </p>
+      <span class="status"> {{ getDifferenceTime(comment!.createdDate?.toString()!) }} </span>
+    </div>
+</div>

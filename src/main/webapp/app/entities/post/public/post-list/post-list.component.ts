@@ -1,21 +1,19 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
 import { PostService } from '../../service/post.service';
-import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IPost, NewPost } from '../../post.model';
-import { CommonModule } from '@angular/common';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { CustomTextInputComponent } from 'app/shared/custom-component/custom-text-input/custom-text-input.component';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Account } from 'app/core/auth/account.model';
 import { EMPTY, mergeMap, Observable, of } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
-import { PostSectionComponent } from '../post-section/post-section.component';
+import { PostItemComponent } from '../post-item/post-item.component';
+import SharedModule from 'app/shared/shared.module';
 
 @Component({
   selector: 'post-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, NgbModule, FontAwesomeModule, CustomTextInputComponent, PostSectionComponent],
+  imports: [SharedModule, PostItemComponent],
   templateUrl: './post-list.component.html',
   styleUrl: './post-list.component.scss'
 })

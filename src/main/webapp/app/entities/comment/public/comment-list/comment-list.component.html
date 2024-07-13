@@ -1,0 +1,15 @@
+<div class="comment-list">
+    <div class="list-group"*ngFor="let comment of comments">
+      <comment-item [comment]="comment" [account]="account" (deletedComment)="deleteComment($event)" (routeHasChanged)="routeChange($event)"></comment-item>
+    </div>  
+</div>
+<form name="commentForm" role="form" novalidate [formGroup]="commentForm">
+    <div class="row">
+        <div class="col-10">
+            <custom-text-input formControlName="content" placeholder="Enter your text here..."></custom-text-input>
+        </div>
+        <div class="col-2">
+            <button class="btn btn-dark" type="button" (click)="createComment()" [disabled]="!commentForm.valid"><fa-icon icon="arrow-right"></fa-icon></button>
+        </div>
+    </div>
+</form>

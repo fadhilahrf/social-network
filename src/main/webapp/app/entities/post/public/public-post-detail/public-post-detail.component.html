@@ -1,9 +1,12 @@
 <div class="row d-flex justify-content-center">
-    <div class="col-7">
-        <div class="card">
-            <div class="card-body">
-                <post-section [post]="post" [account]="account!" [isInList]="false"></post-section>
-            </div>
-          </div>
+  <div class="col-6">
+    <div class="card">
+      <div class="card-body">
+        <post-item [post]="post" [account]="account!" [isInList]="false"></post-item>
+      </div>
     </div>
+    <div class="mt-1 p-2">
+      <comment-list [comments]="comments" [post]="post!" [account]="account!" (commentCount)="commentCountChange($event)"></comment-list>  
+    </div>
+  </div>
 </div>

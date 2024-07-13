@@ -1,30 +1,25 @@
-import { Component, EventEmitter, forwardRef, Input, OnInit, Output } from '@angular/core';
-import SharedModule from 'app/shared/shared.module';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { IPost } from '../../post.model';
 import { IComment } from 'app/entities/comment/comment.model';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
 import { PostService } from '../../service/post.service';
-import { CommentService } from 'app/entities/comment/service/comment.service';
-import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Account } from 'app/core/auth/account.model';
 import { CommentDialogComponent } from 'app/entities/comment/public/comment-dialog/comment-dialog.component';
 import dayjs from 'dayjs';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { CommonModule } from '@angular/common';
-import { CustomTextInputComponent } from 'app/shared/custom-component/custom-text-input/custom-text-input.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PostUpdateDialogComponent } from '../post-update-dialog/post-update-dialog.component';
 import { PostDeleteDialogComponent } from '../../delete/post-delete-dialog.component';
 import { ITEM_DELETED_EVENT } from 'app/config/navigation.constants';
+import SharedModule from 'app/shared/shared.module';
 
 @Component({
-  selector: 'post-section',
+  selector: 'post-item',
   standalone: true,
-  imports: [CommonModule, RouterModule, NgbModule, FontAwesomeModule, FormsModule, ReactiveFormsModule, CustomTextInputComponent],
-  templateUrl: './post-section.component.html',
-  styleUrl: './post-section.component.scss'
+  imports: [SharedModule],
+  templateUrl: './post-item.component.html',
+  styleUrl: './post-item.component.scss'
 })
-export class PostSectionComponent {
+export class PostItemComponent {
   @Output() deletedPost: EventEmitter<number> = new EventEmitter<number>();
 
   @Input() post?: IPost | null;

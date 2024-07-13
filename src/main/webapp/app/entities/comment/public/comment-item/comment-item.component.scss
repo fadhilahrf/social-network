@@ -1,0 +1,30 @@
+.comment-box {
+    align-self: flex-start;
+    padding: 5px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    background-color:#bed6ef;
+    min-width: 20% !important;
+    width: fit-content;
+
+    .status {
+        font-size: x-small;
+        color: gray;
+        display: flex;
+    }
+}
+
+.author {
+    text-decoration: none;
+    color: black;
+}
+
+.dropdown-toggle::after {
+    display: none;
+}
+
+.comment-toggle{
+    display: block;
+    position: absolute;
+    border-radius: 50%;
+}

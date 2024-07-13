@@ -1,26 +1,25 @@
-import { Component, forwardRef, Input, OnInit } from '@angular/core';
-import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import SharedModule from 'app/shared/shared.module';
 import { PostService } from '../../service/post.service';
 import { IPost } from '../../post.model';
 import { IComment } from 'app/entities/comment/comment.model';
 import { CommentService } from 'app/entities/comment/service/comment.service';
-import dayjs from 'dayjs';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Account } from 'app/core/auth/account.model';
-import { CommentDialogComponent } from 'app/entities/comment/public/comment-dialog/comment-dialog.component';
-import { PostSectionComponent } from '../post-section/post-section.component';
+import { PostItemComponent } from '../post-item/post-item.component';
 import { AccountService } from 'app/core/auth/account.service';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import { CommentListComponent } from 'app/entities/comment/public/comment-list/comment-list.component';
 
 @Component({
   selector: 'public-post-detail',
   standalone: true,
-  imports: [forwardRef(()=> SharedModule), PostSectionComponent],
+  imports: [SharedModule, PostItemComponent, CommentListComponent],
   templateUrl: './public-post-detail.component.html',
   styleUrl: './public-post-detail.component.scss'
 })
 export class PublicPostDetailComponent implements OnInit {
-
   post?: IPost | null;
 
   comments: IComment[] = [];
@@ -33,8 +32,10 @@ export class PublicPostDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private postService: PostService,
     private accountService: AccountService,
-    private commentService: CommentService
-  ) {}
+    private commentService: CommentService,
+  ) {
+    dayjs.extend(relativeTime);
+  }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params=>{
@@ -48,6 +49,7 @@ export class PublicPostDetailComponent implements OnInit {
             this.commentService.findAllByPostId(+postId).subscribe(commentsRes=>{
               if(commentsRes.body) {
                 this.comments = commentsRes.body;
+                console.log(this.comments)
               }
             });
           }
@@ -58,5 +60,9 @@ export class PublicPostDetailComponent implements OnInit {
     this.accountService.getAuthenticationState().subscribe(account => {
       this.account = account;
     });
+  }
+
+  commentCountChange(count: number): void {
+    this.post!.commentCount = count;
   }
 }

@@ -13,7 +13,7 @@ import { PostListComponent } from 'app/entities/post/public/post-list/post-list.
  * Application wide Module
  */
 @NgModule({
-  imports: [AlertComponent, AlertErrorComponent, CustomTextInputComponent, PostListComponent],
-  exports: [CommonModule, RouterModule, NgbModule, FontAwesomeModule, AlertComponent, AlertErrorComponent, FormsModule, ReactiveFormsModule, CustomTextInputComponent, PostListComponent],
+  imports: [AlertComponent, AlertErrorComponent, CustomTextInputComponent],
+  exports: [CommonModule, RouterModule, NgbModule, FontAwesomeModule, AlertComponent, AlertErrorComponent, FormsModule, ReactiveFormsModule, CustomTextInputComponent],
 })
 export default class SharedModule {}
