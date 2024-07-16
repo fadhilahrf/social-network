@@ -1,4 +1,4 @@
-<div class="comment-box">
+<div class="comment-box" [id]="'comment-'+comment?.id">
     <div *ngIf="account && (comment!.author?.login==account.login)"
             ngbDropdown
             class="dropdown d-flex justify-content-end"
@@ -21,6 +21,10 @@
     <a class="author" (click)="navigateTo(comment?.author?.login!)"> {{ comment?.author?.login }} </a>
     <div >
       <p> {{ comment!.content }} </p>
-      <span class="status"> {{ getDifferenceTime(comment!.createdDate?.toString()!) }} </span>
+      <div class="d-flex justify-content-between">
+        <span class="status p-0"> {{ getDifferenceTime(comment!.createdDate?.toString()!) }} </span>
+        &nbsp;
+        <button class="btn btn-sm p-0" (click)="likeToggle()"><span class="btn-text"> {{ formatNumber(comment?.likeCount!) }} </span><fa-icon icon="thumbs-up" [size]="'sm'" [ngStyle]="{ color: comment?.likedByMe ? 'black':'grey'}"></fa-icon></button>
+      </div>
     </div>
 </div>

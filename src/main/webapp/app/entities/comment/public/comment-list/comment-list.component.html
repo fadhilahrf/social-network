@@ -1,9 +1,11 @@
-<div class="comment-list">
-    <div class="list-group"*ngFor="let comment of comments">
-      <comment-item [comment]="comment" [account]="account" (deletedComment)="deleteComment($event)" (routeHasChanged)="routeChange($event)"></comment-item>
+<div class="comment-list" #commentList>
+    <div class="list-group">
+        <div *ngFor="let comment of comments" class="mb-1" [ngClass]="targetCommentId && targetCommentId==comment.id ? 'targeted-comment' : ''">
+            <comment-item [comment]="comment" [account]="account" (deletedComment)="deleteComment($event)" (routeHasChanged)="routeChange($event)"></comment-item>
+        </div>
     </div>  
 </div>
-<form name="commentForm" role="form" novalidate [formGroup]="commentForm">
+<form class="mt-1" name="commentForm" role="form" novalidate [formGroup]="commentForm">
     <div class="row">
         <div class="col-10">
             <custom-text-input formControlName="content" placeholder="Enter your text here..."></custom-text-input>

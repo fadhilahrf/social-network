@@ -28,6 +28,8 @@ export class PublicPostDetailComponent implements OnInit {
 
   login?: string | null;
 
+  targetCommentId?: number | null;
+
   constructor(
     private route: ActivatedRoute,
     private postService: PostService,
@@ -40,7 +42,8 @@ export class PublicPostDetailComponent implements OnInit {
   ngOnInit(): void {
     this.route.paramMap.subscribe(params=>{
       this.login = params.get('login');
-      const postId =params.get('postId');
+      this.targetCommentId = Number(params.get('commentId'));
+      const postId = params.get('postId');
       
       if(postId) {
         this.postService.find(+postId).subscribe(postRes=>{
@@ -49,7 +52,6 @@ export class PublicPostDetailComponent implements OnInit {
             this.commentService.findAllByPostId(+postId).subscribe(commentsRes=>{
               if(commentsRes.body) {
                 this.comments = commentsRes.body;
-                console.log(this.comments)
               }
             });
           }

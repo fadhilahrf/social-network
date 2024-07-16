@@ -45,6 +45,14 @@ export class CommentService {
     return this.http.get<IComment[]>(`${this.resourceUrl}/post/${id}`, { observe: 'response' });
   }
 
+  likeComment(id: number): Observable<EntityResponseType> {
+    return this.http.post<IComment>(`${this.resourceUrl}/${id}/like`, null, { observe: 'response' });
+  }
+
+  unlikeComment(id: number): Observable<EntityResponseType> {
+    return this.http.post<IComment>(`${this.resourceUrl}/${id}/unlike`, null, { observe: 'response' });
+  }
+
   query(req?: any): Observable<EntityArrayResponseType> {
     const options = createRequestOption(req);
     return this.http.get<IComment[]>(this.resourceUrl, { params: options, observe: 'response' });

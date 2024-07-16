@@ -11,6 +11,7 @@ import { PostUpdateDialogComponent } from '../post-update-dialog/post-update-dia
 import { PostDeleteDialogComponent } from '../../delete/post-delete-dialog.component';
 import { ITEM_DELETED_EVENT } from 'app/config/navigation.constants';
 import SharedModule from 'app/shared/shared.module';
+import { formatNumber } from 'app/shared/util/number-format-util';
 
 @Component({
   selector: 'post-item',
@@ -32,6 +33,8 @@ export class PostItemComponent {
 
   login?: string | null;
 
+  formatNumber = formatNumber;
+
   constructor(
     private router: Router, 
     private postService: PostService,
@@ -44,7 +47,7 @@ export class PostItemComponent {
         post.likedByMe=true;
         post.likeCount!++;
       }
-    })
+    });
   }
 
   unlikePost(post: IPost): void {
@@ -53,7 +56,7 @@ export class PostItemComponent {
         post.likedByMe=false;
         post.likeCount!--;
       }
-    })
+    });
   }
 
   likeToggle(): void {

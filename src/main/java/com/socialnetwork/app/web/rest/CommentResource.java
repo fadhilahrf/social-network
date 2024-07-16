@@ -92,6 +92,39 @@ public class CommentResource {
          return ResponseEntity.badRequest().body(null);
     }
 
+    @PostMapping("/{id}/like")
+    public ResponseEntity<?> likeComment(@PathVariable("id") Long id) throws URISyntaxException {
+        log.debug("REST request to like Comment : {}", id);
+
+         Optional<NotificationDTO> notificationOptional = commentService.likeComment(id);
+
+         if(notificationOptional.isPresent()) {
+            if(!notificationOptional.get().getReceiver().getLogin().equals(notificationOptional.get().getSender().getLogin())) {
+                messagingTemplate.convertAndSendToUser(
+                    notificationOptional.get().getReceiver().getLogin(), "/notification",
+                    notificationOptional.get()
+                );
+            }
+
+            return ResponseEntity.ok().body(null);
+         }
+
+         return ResponseEntity.badRequest().body(null);
+    }
+
+    @PostMapping("/{id}/unlike")
+    public ResponseEntity<?> unlikeComment(@PathVariable("id") Long id) throws URISyntaxException {
+        log.debug("REST request to like Comment : {}", id);
+
+         Optional<NotificationDTO> notificationOptional = commentService.unlikeComment(id);
+
+         if(notificationOptional.isPresent()) {
+            return ResponseEntity.ok().body(null);
+         }
+
+         return ResponseEntity.badRequest().body(null);
+    }
+
     /**
      * {@code PUT  /comments/:id} : Updates an existing comment.
      *

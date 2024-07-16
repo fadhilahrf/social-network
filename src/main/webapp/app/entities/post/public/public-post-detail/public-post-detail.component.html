@@ -5,8 +5,8 @@
         <post-item [post]="post" [account]="account!" [isInList]="false"></post-item>
       </div>
     </div>
-    <div class="mt-1 p-2">
-      <comment-list [comments]="comments" [post]="post!" [account]="account!" (commentCount)="commentCountChange($event)"></comment-list>  
+    <div class="card p-1 mt-2">
+      <comment-list [comments]="comments" [post]="post!" [account]="account!" [targetCommentId]="targetCommentId!" (commentCount)="commentCountChange($event)"></comment-list>  
     </div>
   </div>
 </div>

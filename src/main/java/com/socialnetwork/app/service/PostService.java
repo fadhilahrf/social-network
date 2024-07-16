@@ -173,7 +173,7 @@ public class PostService {
     }
 
     public Optional<NotificationDTO> unlikePost(Long id) {
-        log.debug("Request to like Post by id : {}", id);
+        log.debug("Request to unlike Post by id : {}", id);
 
         Optional<User> userOptional = userService.getCurrentUser();
 

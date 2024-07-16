@@ -3,10 +3,12 @@ package com.socialnetwork.app.service;
 import com.socialnetwork.app.domain.Comment;
 import com.socialnetwork.app.domain.Notification;
 import com.socialnetwork.app.domain.Post;
+import com.socialnetwork.app.domain.User;
 import com.socialnetwork.app.domain.enumeration.NotificationType;
 import com.socialnetwork.app.repository.CommentRepository;
 import com.socialnetwork.app.repository.NotificationRepository;
 import com.socialnetwork.app.repository.PostRepository;
+import com.socialnetwork.app.security.SecurityUtils;
 import com.socialnetwork.app.service.dto.CommentDTO;
 import com.socialnetwork.app.service.dto.NotificationDTO;
 import com.socialnetwork.app.service.mapper.CommentMapper;
@@ -35,12 +37,15 @@ public class CommentService {
 
     private final NotificationRepository notificationRepository;
 
+    private final UserService userService;
+
     private final CommentMapper commentMapper;
 
-    public CommentService(CommentRepository commentRepository, PostRepository postRepository, NotificationRepository notificationRepository, CommentMapper commentMapper) {
+    public CommentService(CommentRepository commentRepository, PostRepository postRepository, NotificationRepository notificationRepository, UserService userService, CommentMapper commentMapper) {
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
         this.notificationRepository = notificationRepository;
+        this.userService = userService;
         this.commentMapper = commentMapper;
     }
 
@@ -145,7 +150,82 @@ public class CommentService {
 
     public List<CommentDTO> findAllByPostId(Long id) {
         log.debug("Request to get all Comments by post id");
-        return commentRepository.findAllByPostIdOrderByCreatedDateDesc(id).stream().map(commentMapper::toDto).toList();
+        Optional<String> currentUserLoginOptional = SecurityUtils.getCurrentUserLogin();
+
+        return commentRepository.findAllByPostIdOrderByCreatedDateDesc(id).stream().map(comment->{
+            CommentDTO commentDTO = commentMapper.toDto(comment);
+
+            if(currentUserLoginOptional.isPresent()) {
+                for(User liker: comment.getLikes()) {
+                    if(liker.getLogin().equals(currentUserLoginOptional.get())) {
+                        commentDTO.setLikedByMe(true);
+                        break;
+                    }
+                }
+            }
+
+            return commentDTO;
+        }).toList();
+    }
+
+    public Optional<NotificationDTO> likeComment(Long id) {
+        log.debug("Request to like Comment by id : {}", id);
+
+        Optional<User> userOptional = userService.getCurrentUser();
+
+        if(userOptional.isPresent()) {
+            Optional<Comment> commentOptional = commentRepository.findById(id);
+
+            if(commentOptional.isPresent()) {
+                Comment comment = commentOptional.get();
+
+                comment.addLikes(userOptional.get());
+                comment.setLikeCount(comment.getLikeCount()+1);
+
+                commentRepository.save(comment);
+
+                Notification notification = new Notification();
+                notification.setType(NotificationType.COMMENT_LIKED);
+                notification.setDestination(comment.getPost().getAuthor().getLogin()+"/post/"+comment.getPost().getId()+"/comment/"+comment.getId());
+                notification.setSender(userOptional.get());
+                notification.setReceiver(comment.getAuthor());
+                notification.setMessage("<b>"+userOptional.get().getLogin()+"</b> liked your comment.");
+                notification.setIsRead(false);
+
+                return Optional.of(notificationRepository.save(notification)).map(NotificationDTO::new);
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    public Optional<NotificationDTO> unlikeComment(Long id) {
+        log.debug("Request to unlike Comment by id : {}", id);
+
+        Optional<User> userOptional = userService.getCurrentUser();
+
+        if(userOptional.isPresent()) {
+            Optional<Comment> commentOptional = commentRepository.findById(id);
+
+            if(commentOptional.isPresent()) {
+                Comment comment = commentOptional.get();
+
+                comment.removeLikes(userOptional.get());
+                comment.setLikeCount(comment.getLikeCount()-1);
+
+                commentRepository.save(comment);
+
+                Optional<Notification> notificationOptional = notificationRepository.findOneByDestinationAndTypeAndSenderAndReceiver(comment.getPost().getAuthor().getLogin()+"/post/"+comment.getPost().getId()+"/comment/"+comment.getId(), NotificationType.COMMENT_LIKED, userOptional.get(), comment.getAuthor());
+
+                if(notificationOptional.isPresent()) {
+                    notificationRepository.delete(notificationOptional.get());
+    
+                    return Optional.of(notificationOptional.get()).map(NotificationDTO::new);
+                }
+            }
+        }
+
+        return Optional.empty();
     }
 
     /**

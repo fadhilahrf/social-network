@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommentItemComponent } from '../comment-item/comment-item.component';
 import { FormBuilder, Validators } from '@angular/forms';
@@ -16,7 +16,9 @@ import SharedModule from 'app/shared/shared.module';
   styleUrl: './comment-list.component.scss',
   providers: [NgbActiveModal]
 })
-export class CommentListComponent {
+export class CommentListComponent implements OnInit, OnChanges {
+  @ViewChild('commentList', { static: true }) private commentList?: ElementRef<HTMLElement>;
+
   @Output() commentCount: EventEmitter<number> = new EventEmitter();
 
   @Output() routeHasChanged: EventEmitter<boolean> = new EventEmitter(false);
@@ -27,6 +29,8 @@ export class CommentListComponent {
 
   @Input() account?: Account;
 
+  @Input() targetCommentId?: number;
+
   commentForm = this.fb.group({
     content: ['', [Validators.required]],
   });
@@ -36,6 +40,20 @@ export class CommentListComponent {
     private commentService: CommentService,
     private fb: FormBuilder
   ) {}
+
+  ngOnInit(): void {
+      if(this.targetCommentId) {
+        setTimeout(()=>{
+          this.scrollToComment();
+        }, 500);
+      }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['targetCommentId']) {
+      this.scrollToComment();
+    }
+  }
 
   createComment(): void {
     if(this.commentForm.get('content')?.value) {
@@ -68,5 +86,12 @@ export class CommentListComponent {
   
   routeChange(hasChanged: boolean): void {
     this.routeHasChanged.emit(hasChanged)
+  }
+
+  scrollToComment(): void {
+    if(this.comments.some(comment => comment.id === this.targetCommentId)) {
+      const targetElement = <HTMLElement> document.getElementById('comment-'+this.targetCommentId);
+      this.commentList!.nativeElement.scrollTop = targetElement.offsetTop;
+    }
   }
 }

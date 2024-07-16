@@ -22,6 +22,8 @@ public class CommentDTO implements Serializable {
     private UserDTO author;
 
     private PostDTO post;
+    
+    private Boolean likedByMe = false;
 
     private Instant createdDate;
 
@@ -63,6 +65,14 @@ public class CommentDTO implements Serializable {
 
     public void setPost(PostDTO post) {
         this.post = post;
+    }
+
+    public Boolean getLikedByMe() {
+        return likedByMe;
+    }
+
+    public void setLikedByMe(Boolean likedByMe) {
+        this.likedByMe = likedByMe;
     }
 
     public Instant getCreatedDate() {

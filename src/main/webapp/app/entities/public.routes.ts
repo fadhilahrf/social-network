@@ -15,6 +15,10 @@ const publicRoutes: Routes = [
         path: ':login/post/:postId',
         component: PublicPostDetailComponent,
     },
+    {
+        path: ':login/post/:postId/comment/:commentId',
+        component: PublicPostDetailComponent,
+    },
 ];
 
 export default publicRoutes;

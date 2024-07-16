@@ -31,6 +31,6 @@
 <small> {{ getDateTime(post?.createdDate!.toString()) }} </small>
 <h6> {{ post?.content }} </h6>
 <div class="d-flex">
-    <button class="btn p-0" (click)="likeToggle()"><small> {{ post?.likeCount }} </small><fa-icon icon="thumbs-up" [ngStyle]="{ color: post?.likedByMe ? 'black':'grey'}"></fa-icon></button>
-    <button isInList class="btn p-0 mx-3" (click)="isInList ? openCommentDialog():''"><small> {{ post?.commentCount }} </small><fa-icon icon="comment-dots" [ngStyle]="{ color: 'grey' }"></fa-icon></button>
+    <button class="btn p-0" (click)="likeToggle()"><small> {{ formatNumber(post?.likeCount!) }} </small><fa-icon icon="thumbs-up" [ngStyle]="{ color: post?.likedByMe ? 'black':'grey'}"></fa-icon></button>
+    <button isInList class="btn p-0 mx-3" (click)="isInList ? openCommentDialog():''"><small> {{ formatNumber(post?.commentCount!) }} </small><fa-icon icon="comment-dots" [ngStyle]="{ color: 'grey' }"></fa-icon></button>
 </div>

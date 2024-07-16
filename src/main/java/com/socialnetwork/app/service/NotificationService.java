@@ -122,7 +122,7 @@ public class NotificationService {
 
         Optional<User> userOptional = userRepository.findOneByLogin(login);
         if(userOptional.isPresent()) {
-            return notificationRepository.findAllByReceiverOrderByCreatedDateDesc(userOptional.get()).stream().map(notification->{
+            return notificationRepository.findAllByReceiverAndSenderNotOrderByCreatedDateDesc(userOptional.get(), userOptional.get()).stream().map(notification->{
                 notification.setIsRead(true);
                 notification = notificationRepository.save(notification);
 

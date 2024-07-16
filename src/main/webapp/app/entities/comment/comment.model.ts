@@ -8,6 +8,7 @@ export interface IComment {
   likeCount?: number | null;
   author?: Pick<IUser, 'id' | 'login'> | null;
   likes?: Pick<IUser, 'id' | 'login'>[] | null;
+  likedByMe?: boolean;
   post?: Pick<IPost, 'id'> | null;
   createdDate?: dayjs.Dayjs| null;
 }

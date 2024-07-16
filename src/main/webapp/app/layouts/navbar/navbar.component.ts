@@ -54,12 +54,18 @@ export default class NavbarComponent implements OnInit {
 
     this.accountService.getAuthenticationState().subscribe(account => {
       this.account = account;
+      if(this.account) {
+        this.notificationService.countUnreadNotification(this.account!.login).subscribe(res=>{
+          if(res.body) {
+            this.notificationsCount = res.body;
+          }
+        });
+      }
     });
 
     this.stompService.connect({}, ()=>{
       this.stompService.getStomp().subscribe(`/user/${this.account!.login}/notification`, (payload)=>{
         try {
-          console.log(payload.body);
           if(JSON.parse(payload.body)) {
             const notification: INotification = JSON.parse(payload.body);
            
@@ -76,12 +82,6 @@ export default class NavbarComponent implements OnInit {
       }
       });
     }, ()=>{console.log("error")});
-
-    this.notificationService.countUnreadNotification(this.account!.login).subscribe(res=>{
-      if(res.body) {
-        this.notificationsCount = res.body;
-      }
-    })
   }
 
   collapseNavbar(): void {
