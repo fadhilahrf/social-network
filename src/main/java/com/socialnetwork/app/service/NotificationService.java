@@ -13,6 +13,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -133,12 +134,39 @@ public class NotificationService {
        return new ArrayList<>();
     }
 
+    public List<NotificationDTO> readAllByReceiverLimit(String login, Integer limit) {
+        log.debug("Request to read all Notifications by Receiver");
+
+        Optional<User> userOptional = userRepository.findOneByLogin(login);
+        if(userOptional.isPresent()) {
+            return notificationRepository.findAllByReceiverAndSenderNotOrderByCreatedDateDesc(userOptional.get(), userOptional.get(), PageRequest.of(0, limit)).stream().map(notification->{
+                notification.setIsRead(true);
+                notification = notificationRepository.save(notification);
+
+                return new NotificationDTO(notification);
+            }).toList();
+        }
+
+       return new ArrayList<>();
+    }
+
     public Integer countUnreadNotificationByReceiver(String login) {
         log.debug("Request to count unread Notifications by Receiver");
 
         Optional<User> userOptional = userRepository.findOneByLogin(login);
         if(userOptional.isPresent()) {
-            return notificationRepository.countByIsReadAndReceiver(false, userOptional.get());
+            return notificationRepository.countByIsReadAndReceiverAndSenderNot(false, userOptional.get(), userOptional.get());
+        }
+
+       return 0;
+    }
+    
+    public Integer countByReceiverAndSenderNot(String login) {
+        log.debug("Request to count unread Notifications by Receiver");
+
+        Optional<User> userOptional = userRepository.findOneByLogin(login);
+        if(userOptional.isPresent()) {
+            return notificationRepository.countByReceiverAndSenderNot(userOptional.get(), userOptional.get());
         }
 
        return 0;

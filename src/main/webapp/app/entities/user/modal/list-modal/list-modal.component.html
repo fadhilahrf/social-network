@@ -2,7 +2,7 @@
     <h4 class="modal-title fw-bold">{{ title }}</h4>
     <button type="button" class="btn-close" aria-hidden="true" (click)="cancel()"></button>
 </div>
-<div class="modal-body">
+<div class="modal-body list">
     <ul class="list-group">
         <ng-container *ngFor="let user of users">
             <li class="list-group-item user-item" (click)="navigateTo(user.login!)">

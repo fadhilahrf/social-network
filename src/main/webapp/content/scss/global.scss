@@ -250,3 +250,12 @@ angular-cli removes postcss-rtl processed inline css, processed rules must be ad
   width: 100%;
   height: 100%;
 }
+
+.show-more {
+  color: #0d54fb;
+  font-weight: bolder;
+}
+
+.show-more:hover {
+  cursor: pointer;
+}

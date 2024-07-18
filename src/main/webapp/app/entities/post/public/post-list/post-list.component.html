@@ -5,6 +5,7 @@
             <li *ngFor="let post of posts" class="list-group-item">
                 <post-item [post]="post" [account]="account" [isInList]="true" (deletedPost)="deletePost($event)"></post-item>
             </li>
+            <span *ngIf="!isMax" class="show-more text-center" (click)="loadPosts(true)">show more</span>
         </ul>
     </ng-container>
 </div>

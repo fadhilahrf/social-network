@@ -17,6 +17,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -112,6 +113,12 @@ public class PostService {
         return postRepository.findAllByOrderByCreatedDateDesc().stream().map(postMapper::toDto).toList();
     }
 
+    @Transactional(readOnly = true)
+    public List<PostDTO> findAllByOrderByCreatedDateDescLimit(Integer limit) {
+        log.debug("Request to get all Posts order by created date with limit");
+        return postRepository.findAllByOrderByCreatedDateDesc(PageRequest.of(0, limit)).stream().map(postMapper::toDto).toList();
+    }
+
     /**
      * Get all the posts with eager load of many-to-many relationships.
      *
@@ -126,6 +133,26 @@ public class PostService {
         Optional<String> currentUserLoginOptional = SecurityUtils.getCurrentUserLogin();
 
         return postRepository.findAllByAuthorIdOrderByCreatedDateDescWithEagerRelationships(id).stream().map(post->{
+            PostDTO postDTO = postMapper.toDto(post);
+
+            if(currentUserLoginOptional.isPresent()) {
+                for(User liker: post.getLikes()) {
+                    if(liker.getLogin().equals(currentUserLoginOptional.get())) {
+                        postDTO.setLikedByMe(true);
+                        break;
+                    }
+                }
+            }
+
+            return postDTO;
+        }).toList();
+    }
+
+    public List<PostDTO> findAllByAuthorIdOrderByCreatedDateDescLimit(Long id, Integer limit) {
+        log.debug("Request to get All Post by Author with limit : {}", id);
+        Optional<String> currentUserLoginOptional = SecurityUtils.getCurrentUserLogin();
+
+        return postRepository.findAllByAuthorIdOrderByCreatedDateDescWithEagerRelationshipsLimit(id, PageRequest.of(0, limit)).stream().map(post->{
             PostDTO postDTO = postMapper.toDto(post);
 
             if(currentUserLoginOptional.isPresent()) {

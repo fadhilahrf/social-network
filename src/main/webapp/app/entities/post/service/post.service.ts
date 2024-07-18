@@ -37,11 +37,17 @@ export class PostService {
     return this.http.get<IPost>(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
-  findAll(): Observable<EntityArrayResponseType> {
+  findAll(limit?: number): Observable<EntityArrayResponseType> {
+    if(limit) {
+      return this.http.get<IPost[]>(`${this.resourceUrl}/all?limit=${limit}`, { observe: 'response' });
+    }
     return this.http.get<IPost[]>(`${this.resourceUrl}/all`, { observe: 'response' });
   }
 
-  findAllByAuthorId(id: number): Observable<EntityArrayResponseType> {
+  findAllByAuthorId(id: number, limit?: number): Observable<EntityArrayResponseType> {
+    if(limit) {
+      return this.http.get<IPost[]>(`${this.resourceUrl}/author/${id}?limit=${limit}`, { observe: 'response' });
+    }
     return this.http.get<IPost[]>(`${this.resourceUrl}/author/${id}`, { observe: 'response' });
   }
 

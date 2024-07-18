@@ -14,6 +14,7 @@ import { NotificationService } from 'app/entities/notification/service/notificat
 import { StompService } from 'app/shared/service/stomp.service';
 import { INotification } from 'app/entities/notification/notification.model';
 import dayjs from 'dayjs';
+import { faL } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   standalone: true,
@@ -31,6 +32,8 @@ export default class NavbarComponent implements OnInit {
   entitiesNavbarItems: NavbarItem[] = [];
   notificationsCount = 0;
   notifications: INotification[] = [];
+  limit=5;
+  isMax=false;
 
   constructor(
     private loginService: LoginService,
@@ -102,13 +105,19 @@ export default class NavbarComponent implements OnInit {
     this.isNavbarCollapsed = !this.isNavbarCollapsed;
   }
 
-  getNotifications(): void {
-    this.notificationService.readAllByReceiver(this.account?.login!).subscribe(res=>{
+  loadNotifications(isShowMore: boolean): void {
+    if(isShowMore) {
+      this.limit+=5;
+    }
+
+    this.notificationService.readAllByReceiver(this.account?.login!, this.limit).subscribe(res=>{
       if(res.body) {
         this.notificationsCount = 0;
         this.notifications = res.body;
+        this.isMax = JSON.parse(res.headers.get('Is-Max')!);
       }
     });
+
   }
 
   navigateTo(destination: string) {

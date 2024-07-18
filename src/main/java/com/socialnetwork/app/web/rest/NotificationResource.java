@@ -165,9 +165,18 @@ public class NotificationResource {
     }
 
     @GetMapping("/read/{login}")
-    public ResponseEntity<List<NotificationDTO>> readAllNotificationsByReceiver(@PathVariable("login") String login) {
+    public ResponseEntity<List<NotificationDTO>> readAllNotificationsByReceiver(@PathVariable("login") String login, @RequestParam(value = "limit", required = false) Integer limit) {
         log.debug("REST request to read Notifications by Receiver");
-        return ResponseEntity.ok().body(notificationService.readAllByReceiver(login));
+        if(limit==null) {
+            return ResponseEntity.ok().body(notificationService.readAllByReceiver(login));
+        }
+        
+        List<NotificationDTO> result = notificationService.readAllByReceiverLimit(login, limit);
+        Integer maxLimit = notificationService.countByReceiverAndSenderNot(login);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Is-Max", String.valueOf(result.size()>=maxLimit));
+
+        return ResponseEntity.ok().headers(headers).body(result);
     }
 
     @GetMapping("/count-unread/{login}")

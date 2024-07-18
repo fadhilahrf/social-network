@@ -29,6 +29,10 @@ export class PostListComponent implements OnInit {
     content: ['', [Validators.required]],
   });
 
+  isMax = false;
+
+  limit = 2;
+
   constructor(
     private router: Router, 
     private postService: PostService,
@@ -37,20 +41,26 @@ export class PostListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.loadPosts();
+    this.loadPosts(false);
   }
 
-  loadPosts(): void {
+  loadPosts(isShowMore: boolean): void {
+    if(isShowMore) {
+      this.limit+=2;
+    }
+
     if(this.userId) {
-      this.postService.findAllByAuthorId(this.userId).subscribe(res=>{
+      this.postService.findAllByAuthorId(this.userId, this.limit).subscribe(res=>{
         if(res.body) {
           this.posts = res.body;
+          this.isMax = JSON.parse(res.headers.get('Is-Max')!);
         }
       });
     } else {
-      this.postService.findAll().subscribe(res=>{
+      this.postService.findAll(this.limit).subscribe(res=>{
         if(res.body) {
           this.posts = res.body;
+          this.isMax = JSON.parse(res.headers.get('Is-Max')!);
         }
       });
     }

@@ -52,8 +52,12 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     List<Notification> findAllByReceiverOrderByCreatedDateDesc(User user);
 
     List<Notification> findAllByReceiverAndSenderNotOrderByCreatedDateDesc(User receiver, User sender);
+    
+    List<Notification> findAllByReceiverAndSenderNotOrderByCreatedDateDesc(User receiver, User sender, Pageable pageable);
 
     Optional<Notification> findOneByDestinationAndTypeAndSenderAndReceiver(String destination, NotificationType type, User sender, User receiver);
 
-    Integer countByIsReadAndReceiver(Boolean isRead, User user);
+    Integer countByIsReadAndReceiverAndSenderNot(Boolean isRead, User receiver, User Sender);
+
+    Integer countByReceiverAndSenderNot(User receiver, User Sender);
 }

@@ -34,7 +34,7 @@
             href="javascript:void(0);"
             id="notification-dropdown"
             data-cy="notificationDropdown"
-            (click)="getNotifications()"
+            (click)="loadNotifications(false)"
           >
             <span>
               <fa-icon icon="bell"></fa-icon>
@@ -54,6 +54,7 @@
               </div>
               <small class="notification-time"> {{ getDateTime(notification.createdDate?.toString()!) }} </small>
             </li>
+            <li *ngIf="!isMax" class="show-more text-center" (click)="loadNotifications(true)">show more</li>
             <li *ngIf="notifications.length === 0" class="dropdown-item text-center">No notifications</li>
           </ul>
         </li>

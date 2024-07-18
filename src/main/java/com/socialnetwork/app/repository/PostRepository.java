@@ -31,9 +31,19 @@ public interface PostRepository extends PostRepositoryWithBagRelationships, JpaR
 
     public List<Post> findAllByAuthorIdOrderByCreatedDateDesc(Long id);
 
+    public List<Post> findAllByAuthorIdOrderByCreatedDateDesc(Long id, Pageable pageable);
+
     default List<Post> findAllByAuthorIdOrderByCreatedDateDescWithEagerRelationships(Long id) {
         return this.fetchBagRelationships(this.findAllByAuthorIdOrderByCreatedDateDesc(id));
     }
 
+    default List<Post> findAllByAuthorIdOrderByCreatedDateDescWithEagerRelationshipsLimit(Long id, Pageable pageable) {
+        return this.fetchBagRelationships(this.findAllByAuthorIdOrderByCreatedDateDesc(id, pageable));
+    }
+
     public List<Post> findAllByOrderByCreatedDateDesc();
+
+    public List<Post> findAllByOrderByCreatedDateDesc(Pageable pageable);
+
+    public Integer countByAuthorId(Long id);
 }

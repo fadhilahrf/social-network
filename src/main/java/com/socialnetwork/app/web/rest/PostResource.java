@@ -200,15 +200,33 @@ public class PostResource {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<PostDTO>> getAll() {
+    public ResponseEntity<List<PostDTO>> getAll(@RequestParam(value = "limit", required = false) Integer limit) {
         log.debug("REST request to get all Posts");
-        return ResponseEntity.ok().body(postService.findAllByOrderByCreatedDateDesc());
+        if(limit==null) {
+            return ResponseEntity.ok().body(postService.findAllByOrderByCreatedDateDesc());
+        }
+        List<PostDTO> result = postService.findAllByOrderByCreatedDateDescLimit(limit);
+
+        Integer maxLimit = Long.valueOf(postRepository.count()).intValue();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Is-Max", String.valueOf(result.size()>=maxLimit));
+
+        return ResponseEntity.ok().headers(headers).body(result);
     }
 
     @GetMapping("/author/{id}")
-    public ResponseEntity<List<PostDTO>> getAllPostsByAuthorId(@PathVariable("id") Long id) {
+    public ResponseEntity<List<PostDTO>> getAllPostsByAuthorId(@PathVariable("id") Long id, @RequestParam(value = "limit", required = false) Integer limit) {
         log.debug("REST request to get a page of Posts by Author id");
-        return ResponseEntity.ok().body(postService.findAllByAuthorIdOrderByCreatedDateDesc(id));
+        if(limit==null) {
+            return ResponseEntity.ok().body(postService.findAllByAuthorIdOrderByCreatedDateDesc(id));
+        }
+        List<PostDTO> result = postService.findAllByAuthorIdOrderByCreatedDateDescLimit(id, limit);
+
+        Integer maxLimit = postRepository.countByAuthorId(id);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Is-Max", String.valueOf(result.size()>=maxLimit));
+
+        return ResponseEntity.ok().headers(headers).body(result);
     }
 
     /**

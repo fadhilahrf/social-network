@@ -50,7 +50,10 @@ export class NotificationService {
     return this.http.get<INotification[]>(`${this.resourceUrl}/receiver/${login}`, { observe: 'response' });
   }
 
-  readAllByReceiver(login: string): Observable<EntityArrayResponseType> {
+  readAllByReceiver(login: string, limit?: number): Observable<EntityArrayResponseType> {
+    if(limit) {
+      return this.http.get<INotification[]>(`${this.resourceUrl}/read/${login}?limit=${limit}`, { observe: 'response' });
+    }
     return this.http.get<INotification[]>(`${this.resourceUrl}/read/${login}`, { observe: 'response' });
   }
 
